@@ -24,6 +24,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,6 +42,7 @@ import java.util.Set;
  */
 @Slf4j
 public final class HttpClient4Util {
+
 
     /**
      * 连接超时时间
@@ -68,9 +70,7 @@ public final class HttpClient4Util {
         return post(url, params, encoding);
     }
 
-    public static String getPost(String url, String params) {
-        return doPost(url, params);
-    }
+
 
 
     /**
@@ -255,30 +255,7 @@ public final class HttpClient4Util {
         return response;
     }
 
-    private static String doPost(String url, String body) {
-        // post请求
-        CloseableHttpClient httpClient;
-        HttpPost httpPost;
-        HttpResponse response;
-        String responseContent;
-        try {
-            // 创建 httpClient
-            httpClient = HttpClients.createDefault();
-            httpPost = new HttpPost(url);
-            httpPost.addHeader("Content-Type", "application/json");
-            httpPost.addHeader("Authorization", "Bearer " + "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");
-            httpPost.setEntity(new StringEntity(body, StandardCharsets.UTF_8));
-            response = httpClient.execute(httpPost);
-            HttpEntity httpEntity = response.getEntity();
-            responseContent = EntityUtils.toString(httpEntity, "UTF-8");
-            EntityUtils.consume(httpEntity);
-            return responseContent;
-        } catch (IOException e) {
-            log.info("异常消息:" + e.getMessage());
-            return "";
-        }
 
-    }
 
 
 }

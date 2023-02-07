@@ -56,8 +56,7 @@ public class Group_Eat_Today implements ApplicationRunner {
     @Autowired
     private Send_To_minio send_to_minio;
 
-    @Autowired
-    private MinIOFileStorageService fileStorageService;
+
 
 
     @Autowired
@@ -174,7 +173,7 @@ public class Group_Eat_Today implements ApplicationRunner {
           Today_Eat eat = new Today_Eat();
           ID id = event.getAuthor().getId();
           String qq=id.toString();
-          String nickname=event.getAuthor().getNickname();
+          String nickname=event.getAuthor().getNickOrUsername();
 
                 eat.setQq(nickname + "(" + qq + ")");
           if (groupReply.contains(Integer.valueOf(String.valueOf(event.getGroup().getId())))) {
@@ -183,7 +182,9 @@ public class Group_Eat_Today implements ApplicationRunner {
                     for (Message.Element<?> message : event.getMessageContent().getMessages()) {
                         if (message instanceof Image<?> image) {
                             log.info(MessageFormat.format("[图片消息: {0} ]", image.getResource().getName()));
-                            s =s+ MakeNeko.MakePicture(image.getResource().getName());
+
+                            String fileId= send_to_minio.Send_ToMinio_Picture_new(image.getResource().getName());
+                            s =s+ MakeNeko.MakePicture(fileId);
                         }
                         if (message instanceof Text) {
                             log.info(MessageFormat.format("[文字消息: {0} ]", ((Text) message).getText().substring(7)));
@@ -200,39 +201,6 @@ public class Group_Eat_Today implements ApplicationRunner {
                 } else {
                     event.replyAsync ( "存储 今天吃什么 失败");
                 }
-
-
-//                String text = msg.getText().substring(7);
-//                MessageContent msgContent = msg.getMsgContent();
-//                String s = "";
-//                List<Neko> image = msgContent.getCats("image");
-//                if (image.size() != 0) {
-//                    for (Neko neko : image) {
-//                        String url = neko.get("url");
-//                        String fileId= send_to_minio.Send_ToMinio_Picture_new(url);
-//                        s = s + MakeNeko.MakePicture(fileId);
-//                    }
-//                }
-//                String qq = msg.getAccountInfo().getAccountCode();
-//                String nickname = msg.getAccountInfo().getAccountNickname();
-//                eat.setMessage(text + "\n" + s);
-//                eat.setQq(nickname + "(" + qq + ")");
-//                int i = todayEatService.Studay_Today_Eat_Message(eat);
-//                if (i != 0) {
-//                    sender.sendGroupMsg(msg, "存储 今天吃什么 成功");
-//                    this.today_eat = null;
-//                    this.today_eat = todayEatService.Send_Today_Eat_Message();
-//                } else {
-//                    sender.sendGroupMsg(msg, "存储 今天吃什么 失败");
-//                }
-//
-//                } catch (Exception e) {
-//                    log.info("文件上传失败 错误如下");
-//                    e.printStackTrace();
-//                }
-//
-//            } else {
-//                sender.sendGroupMsg(msg, "管理员未开启该功能");
             }else {
                event.getSource().sendAsync("管理员未开启该功能");
           }
@@ -257,17 +225,22 @@ public class Group_Eat_Today implements ApplicationRunner {
           String pattern = "https?://[^\\s]+";
           Pattern r = Pattern.compile(pattern);
           Matcher m = r.matcher(message);
-          String[] split = message.split("\n");
+          String[] split =message.split("\\[");
            String text1=  split[0];
+          String group="";
+if(m.find()){
+     group = m.group();
+}
 
-              String group = m.group();
-              String s = group.replaceAll("]", "");
-              messagesBuilder.append("该条信息的ID是: "+end.getId()+"\n信息内容是:\n"+text1);
-          messagesBuilder.image(Resource.of(new URL(s)));
-          messagesBuilder.append("\n存储人是:\n"+end.getQq());
+    String s = group.replaceAll("]", "");
+    messagesBuilder.append("该条信息的ID是: "+end.getId()+"\n信息内容是:\n"+text1);
+    messagesBuilder.image(Resource.of(new URL(s)));
+    messagesBuilder.append("\n存储人是:\n"+end.getQq());
+    miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(),messagesBuilder.build());
       }
-      Messages build = messagesBuilder.build();
-      event.replyAsync(build);
+
+
+      event.replyAsync(miraiForwardMessageBuilder.build());
 
 
 
