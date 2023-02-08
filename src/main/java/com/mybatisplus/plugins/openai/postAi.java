@@ -51,8 +51,6 @@ private Openai_api openai_api;
             params.put("max_tokens", 4000);
             log.info("触发");
 
-
-
             String post = openai_api.getPost("https://api.openai.com/v1/completions", gson.toJson(params));
             openAiData openAiData = gson.fromJson(post, openAiData.class);
             for (int i = 0; i < openAiData.getChoices().size(); i++) {
