@@ -181,13 +181,13 @@ public class Group_Eat_Today implements ApplicationRunner {
                     String s="";
                     for (Message.Element<?> message : event.getMessageContent().getMessages()) {
                         if (message instanceof Image<?> image) {
-                            log.info(MessageFormat.format("[图片消息: {0} ]", image.getResource().getName()));
+                        //    log.info(MessageFormat.format("[图片消息: {0} ]", image.getResource().getName()));
 
                             String fileId= send_to_minio.Send_ToMinio_Picture_new(image.getResource().getName());
                             s =s+ MakeNeko.MakePicture(fileId);
                         }
                         if (message instanceof Text) {
-                            log.info(MessageFormat.format("[文字消息: {0} ]", ((Text) message).getText().substring(7)));
+                       //     log.info(MessageFormat.format("[文字消息: {0} ]", ((Text) message).getText().substring(7)));
                             s =s+((Text) message).getText().substring(7)+"\n";
                         }
                     }
