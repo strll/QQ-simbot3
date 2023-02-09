@@ -143,9 +143,6 @@ if (group_talk.equals("1")){
 
             }
         }
-        else{
-                event.replyAsync("未开启该模块");
-            }
     }
 
     @Override
