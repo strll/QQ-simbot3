@@ -40,10 +40,7 @@ public class GroupDeleteSessionAreaEvent implements ApplicationRunner {
     @Autowired
     private IMessageService service;
 
-    Message message = null;
-    HashMap<String, Message> hashMap=new HashMap<>();
 
-   // private volatile boolean Delete_flag=true; //删除模块启动标志
     @Autowired
     private IAdminService adminService;
 
@@ -86,55 +83,62 @@ public class GroupDeleteSessionAreaEvent implements ApplicationRunner {
 
 
     @Listener
-    @Filter(value = "nana删除", matchType = MatchType.TEXT_STARTS_WITH)
+    @Filter(value = "nana删除", matchType = MatchType.TEXT_EQUALS)
     public void testConversationDomain(GroupMessageEvent event, ContinuousSessionContext sessionContext) {
-        event.replyAsync("请问您要删除的关键词是什么?");
-        ID groupId1 = event.getGroup().getId();
-        ID id = event.getGroup().getId();
-        String accountCode = event.getAuthor().getId().toString();  //获取发送人的QQ号
-        final String qqId = String.valueOf(event.getAuthor().getId());
-        final int time = 30;
-        if (groupReply.contains(Integer.valueOf(id.toString()))) {
 
-            sessionContext.waitingForNextMessage(qqId, GroupMessageEvent.Key, time, TimeUnit.SECONDS, (e, c) ->
-            {
-                if ((c.getAuthor().getId().equals(id) && c.getGroup().getId().equals(groupId1))) {
-                    return false;
-                }
+        if (groupReply.contains(Integer.valueOf( event.getGroup().getId().toString()))) {
+            event.replyAsync("请问您要删除的关键词是什么?");
+            ID groupId1 = event.getGroup().getId();
+            ID id = event.getGroup().getId();
+            String accountCode = event.getAuthor().getId().toString();  //获取发送人的QQ号
+            final String qqId = String.valueOf(event.getAuthor().getId());
+            final int time = 30;
+            if (groupReply.contains(Integer.valueOf(id.toString()))) {
 
-                if (e instanceof TimeoutException) {
-                    c.replyAsync("超时啦");
-                }
-                Messages messages = c.getMessageContent().getMessages();
-                for (love.forte.simbot.message.Message.Element<?> element : messages) {
-                    if (element instanceof Text) {
-                        String text = ((Text) element).getText();
-                        List<String> strings = service.Get_QQ_by_key(text); //根据要删除的内容返回这个key所有的qq号
-                        int size = strings.size();
-                        if (size != 0) {
-                            for (String string : strings) {
-                                //如果这个qq号和触发这个函数的QQ号相同并且权限满足
-                                if (string.equals(c.getAuthor().getId().toString())) {
-                                    int i = 0;
-                                    int b = 0;
-                                    i = service.DeleteMessage(text);
-                                    if (b + i == 0) {
-                                        c.replyAsync("删除失败");
+                sessionContext.waitingForNextMessage(qqId, GroupMessageEvent.Key, time, TimeUnit.SECONDS, (e, c) ->
+                {
+                    if ((c.getAuthor().getId().equals(id) && c.getGroup().getId().equals(groupId1))) {
+                        return false;
+                    }
+
+                    if (e instanceof TimeoutException) {
+                        c.replyAsync("超时啦");
+                    }
+                    Messages messages = c.getMessageContent().getMessages();
+                    for (love.forte.simbot.message.Message.Element<?> element : messages) {
+                        if (element instanceof Text) {
+                            String text = ((Text) element).getText();
+                            List<String> strings = service.Get_QQ_by_key(text); //根据要删除的内容返回这个key所有的qq号
+                            int size = strings.size();
+                            if (size != 0) {
+                                for (String string : strings) {
+                                    //如果这个qq号和触发这个函数的QQ号相同并且权限满足
+                                    if (string.equals(c.getAuthor().getId().toString())) {
+                                        int i = 0;
+                                        int b = 0;
+                                        i = service.DeleteMessage(text);
+                                        if (b + i == 0) {
+                                            c.replyAsync("删除失败");
 
 
+                                        } else {
+                                            c.replyAsync("删除成功");
+                                        }
+                                        break;
                                     } else {
-                                        c.replyAsync("删除成功");
+                                        c.replyAsync("您的权限不足 只能管理员或者本人才能删除");
                                     }
-                                    break;
-                                } else {
-                                    c.replyAsync("您的权限不足 只能管理员或者本人才能删除");
                                 }
+                            }else {
+                                c.replyAsync("未查询到您存储的关于\n"+text+"\n的信息");
                             }
                         }
                     }
-                }
-                return true;
-            });
+                    return true;
+                });
+            }
+        }else{
+            event.replyAsync("该群管理员未开启删除模块");
         }
     }
 

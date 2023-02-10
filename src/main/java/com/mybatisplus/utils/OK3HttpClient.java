@@ -16,10 +16,16 @@ import java.util.Map;
  * &#064;description
  */
 
-
 public class OK3HttpClient {
     private static final Logger log = LoggerFactory.getLogger(OK3HttpClient.class);
 
+    /**
+     * 发起get请求
+     * @param url
+     * @param params
+     * @param headMap
+     * @return json数据
+     */
     public static String httpGet(String url, Map<String, Object> params, Map<String, String> headMap) {
         // 设置HTTP请求参数
         String result = null;
@@ -33,8 +39,7 @@ public class OK3HttpClient {
         var call = okHttpClient.newCall(request);
         try {
             var response = call.execute();
-            assert response.body() != null;
-            //result = String.valueOf(new Gson().toJson(string));
+            if (response.body() == null) throw new AssertionError();
             result= response.body().string();
         } catch (Exception e) {
             log.error("调用三方接口出错", e);
@@ -42,6 +47,10 @@ public class OK3HttpClient {
         return result;
     }
 
+    /**
+     * 请求参数
+     * @return params
+     */
     public static String getParams(Map<String, Object> params) {
         var sb = new StringBuilder("?");
         if (params != null) {
@@ -54,11 +63,14 @@ public class OK3HttpClient {
                 }
             });
             return sb.toString();
-        } else {
-            return "";
-        }
+        } else return "";
     }
 
+    /**
+     * 请求头
+     * @param headersParams
+     * @return
+     */
     public static Headers SetHeaders(Map<String, String> headersParams) {
         var headersbuilder = new Headers.Builder();
         if (headersParams != null) {

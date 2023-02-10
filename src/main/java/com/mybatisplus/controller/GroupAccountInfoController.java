@@ -102,7 +102,8 @@ public class GroupAccountInfoController implements ApplicationRunner {
                 + "\n 22.nana动漫资讯"
                 + "\n 23.nana小鸡词典 (示例: nana小鸡词典 盐系) 微博恶意盗取小鸡词典文库 小鸡词典在于微博的官司中入不敷出 现网站服务器因为某些特殊原因永久关闭 "
                 + "\n 24.nana刷新"
-                + "\n 25.回复功能中新增图片解析 可以根据发送的链接访问并且生产图片 (效率可能较低 2023.1.26新增)"
+                + "\n 25.回复功能中新增图片解析 可以根据发送的链接访问并且生产图片 (效率可能较低 2023.1.26新增)" +
+                "\n 26.nana搜图 (2023.2.9新增)"
         );
         miraiForwardMessageBuilder.add(event.getBot().getId(), event.getBot().getUsername(), messagesBuilder.build());
         event.getSource().sendBlocking(miraiForwardMessageBuilder.build());
@@ -256,10 +257,10 @@ public class GroupAccountInfoController implements ApplicationRunner {
     }
 
     //====================================================
+
     @Autowired
-    private Get_LOVE love;
-    @Autowired
-    private Openai_api openai_api;
+    private Get_Picture_in_Text get_picture;
+
     @Async
     @Listener
     public void onGroupMsg(GroupMessageEvent event) throws IOException {
@@ -268,14 +269,19 @@ public class GroupAccountInfoController implements ApplicationRunner {
         if (groupReply.contains(Integer.valueOf(event.getGroup().getId().toString())) && !blackset.contains(Long.parseLong(accountCode))) {
             String valuemessage = "";
             for (love.forte.simbot.message.Message.Element<?> message : event.getMessageContent().getMessages()) {
-                if (message instanceof Image<?> image) {
-                    String picture = get_url_in_text_and_get_picture_from_url.getPicture(image.getResource().getName());
-                    if (picture != null) {
-                        SendMsgUtil.sendSimpleGroupImage(event.getGroup(), picture);
-                    }
-                }
+//                if (message instanceof Image<?> image) {
+//                    String picture = get_url_in_text_and_get_picture_from_url.getPicture(image.getResource().getName());
+//                    if (picture != null) {
+//                        SendMsgUtil.sendSimpleGroupImage(event.getGroup(), picture);
+//                    }
+//                }
                 if (message instanceof Text text) {
                     String text1 = ((Text) message).getText();
+                    //校验text中是否含有url 如果有url的话解析并发送图片
+                    MessagesBuilder messagesBuilder1 = get_picture.get(text1);
+                    event.replyAsync(messagesBuilder1.build());
+                    //
+
                     Message message1 = new Message();
                     message1.setKeymessage(text1);
                     List<Message> messages = service.Get_Message_by_key(message1);
