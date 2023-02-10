@@ -278,8 +278,13 @@ public class GroupAccountInfoController implements ApplicationRunner {
                 if (message instanceof Text text) {
                     String text1 = ((Text) message).getText();
                     //校验text中是否含有url 如果有url的话解析并发送图片
-                    MessagesBuilder messagesBuilder1 = get_picture.get(text1);
-                    event.replyAsync(messagesBuilder1.build());
+                    try {
+                        MessagesBuilder messagesBuilder1 = get_picture.get(text1);
+                        event.replyAsync(messagesBuilder1.build());
+                    }catch (Exception e){
+
+                    }
+
                     //
 
                     Message message1 = new Message();

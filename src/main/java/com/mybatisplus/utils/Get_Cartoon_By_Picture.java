@@ -36,8 +36,8 @@ public class Get_Cartoon_By_Picture {
             String s = body1.replaceAll("<body>", "");
             JSONObject jsonObject = JSONObject.parseObject(s);
             JSONArray result = jsonObject.getJSONArray("result");
-            JSONObject o = result.getJSONObject(0);
-            // for ( Object o : result) {
+      //      JSONObject o = result.getJSONObject(0);
+             for ( Object o : result) {
                 var  msg = new MessagesBuilder();
                 JSONObject o1 = (JSONObject) o;
                 String native_name = o1.getJSONObject("anilist").getJSONObject("title").get("native").toString();
@@ -45,10 +45,10 @@ public class Get_Cartoon_By_Picture {
                 msg.append("native_name:"+native_name);
                 String synonyms = o1.getJSONObject("anilist").get("synonyms").toString();
                 msg.append("synonyms:"+synonyms );
-                String image = o1.getString("image");
-         //       msg.image(Resource.of(new URL(image))).append("\n");
+                String image = o1.getString("image").replaceAll("&amp;","&");
+                msg.image(Resource.of(new URL(image))).append("\n");
                 miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), msg.build());
-        //    }
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
