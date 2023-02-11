@@ -39,27 +39,6 @@ public class GetMoYu {
         }
     return messagesBuilder;
 
-//        HttpClient httpClient = new DefaultHttpClient();
-//        HttpContext httpContext = new BasicHttpContext();
-//        HttpGet httpGet = new HttpGet("https://api.emoao.com/api/moyu");
-//        try {
-//            //将HttpContext对象作为参数传给execute()方法,则HttpClient会把请求响应交互过程中的状态信息存储在HttpContext中
-//            HttpResponse response = httpClient.execute(httpGet, httpContext);
-//            //获取重定向之后的主机地址信息
-//            HttpHost targetHost = (HttpHost) httpContext.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
-//            //获取实际的请求对象的URI,即重定向之后的地址
-//            HttpUriRequest realRequest = (HttpUriRequest) httpContext.getAttribute(ExecutionContext.HTTP_REQUEST);
-//            HttpEntity entity = response.getEntity();
-//        //    String url = "[CAT:image,file=" + targetHost + realRequest.getURI() + "]";
-//            String url = targetHost+"" + realRequest.getURI() ;
-//
-//            return url;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            httpClient.getConnectionManager().shutdown();
-//        }
-//        return "获取摸鱼日历失败";
     }
 }
 

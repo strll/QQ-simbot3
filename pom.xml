@@ -8,15 +8,16 @@
     <artifactId>QQ-simbot3</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <simbot.mirai.version>3.0.0-RC</simbot.mirai.version>
-        <simbot-component-tcg.version>3.0.0.0.preview.3.1</simbot-component-tcg.version>
-        <simbot-component-mirai.version>3.0.0.0.preview.2.2</simbot-component-mirai.version>
+        <simbot.version>3.0.0-M6</simbot.version>
+        <simbot-component-mirai.version>3.0.0.0-M4</simbot-component-mirai.version>
     </properties>
+
     <!-- Spring Boot 相关。此处选择使用parent对Spring进行版本控制 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -34,11 +35,21 @@
 
 
         <!-- https://mvnrepository.com/artifact/love.forte.simbot.boot/simboot-core-springboot-starter -->
+
+
+
+
         <dependency>
             <groupId>love.forte.simbot.boot</groupId>
             <artifactId>simboot-core-spring-boot-starter</artifactId>
-            <version>3.0.0-M2</version>
+            <version>${simbot.version}</version>
         </dependency>
+        <dependency>
+            <groupId>love.forte.simbot.component</groupId>
+            <artifactId>simbot-component-mirai-core</artifactId>
+            <version>${simbot-component-mirai.version}</version>
+        </dependency>
+
 
         <!-- HttpClinet 核心包 -->
         <dependency>
@@ -53,17 +64,9 @@
             <version>4.5.14</version>
         </dependency>
 
-        <dependency>
-            <groupId>love.forte.simbot.component</groupId>
-            <artifactId>simbot-component-mirai-boot</artifactId>
-            <version>3.0.0.0-beta.3</version>
-        </dependency>
 
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
+
 
 
 
@@ -220,11 +223,7 @@
             <artifactId>fastjson</artifactId>
             <version> 1.2.54</version>
         </dependency>
-        <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>7.1.0</version>
-        </dependency>
+
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
@@ -237,26 +236,74 @@
         </dependency>
     </dependencies>
     <build>
+
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <testExcludes>
+                        <testExclude>/src/test/**</testExclude>
+                    </testExcludes>
+                    <encoding>utf-8</encoding>
+                </configuration>
+            </plugin>
+
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.6</version>
+
+                <configuration>
+
+                    <!-- main方法所在类。 -->
+                    <mainClass>com.mybatisplus.Application</mainClass>
+                </configuration>
+
+
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
+
+
+
+
         </plugins>
 
-            <!-- 打包resources目录下的文件 -->
-            <resources>
+        <!-- 打包resources目录下的文件 -->
+        <resources>
 
-                    <resource>
-                        <directory>src/main/java</directory>
-                        <includes>
-                            <include>**/*.xml</include>
-                        </includes>
-                        <filtering>false</filtering>
-                    </resource>
-
-                  </resources>
-
-
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+         </resources>
     </build>
+
+
+
+
+
+
+
+
 </project>

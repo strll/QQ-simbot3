@@ -36,6 +36,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.URL;
@@ -44,6 +45,7 @@ import java.util.*;
 
 
 @Log4j2
+@Transactional
 @Controller
 public class GroupAccountInfoController implements ApplicationRunner {
     @Autowired
@@ -311,12 +313,17 @@ public class GroupAccountInfoController implements ApplicationRunner {
                             valuemessage = messages.get(i).getValuemessage();
                             if (valuemessage.equals("")) {
                                 MessagesBuilder messagesBuilder = new MessagesBuilder();
-                                messagesBuilder.image(Resource.of(new URL(messages.get(0).getUrl())));
+                                try {
+                                    messagesBuilder.image(Resource.of(new URL(messages.get(i).getUrl())));
+                                    }catch (Exception e){
+
+                                }
+
                                 Messages build = messagesBuilder.build();
                                 event.getSource().sendAsync(build);
                             } else {
-                                String v = messages.get(0).getValuemessage();
-                                MessagesBuilder message2 = Cat_to_message.getMessage(messages.get(0).getValuemessage());
+                                String v = messages.get(i).getValuemessage();
+                                MessagesBuilder message2 = Cat_to_message.getMessage(v);
                                 event.getSource().sendAsync(message2.build());
                             }
                         }
@@ -328,9 +335,6 @@ public class GroupAccountInfoController implements ApplicationRunner {
 
                         // 获取信息
                         String s = ((SimbotOriginalMiraiMessage) message).getOriginalMiraiMessage().contentToString();
-//                        JSONObject jsonObject =  JSON.parseObject(s);
-//                    String o = jsonObject.getJSONObject("meta").getJSONObject("detail_1").get("qqdocurl").toString();
-
                     JSONObject jsonObject = JSON.parseObject(s);
                     if(!Objects.isNull(jsonObject.get("desc").toString())){
                         String desc = jsonObject.get("desc").toString();
