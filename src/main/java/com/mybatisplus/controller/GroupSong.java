@@ -46,7 +46,7 @@ public class GroupSong {
 //    }
 
     @Listener
-    @Filter(value = "/点歌 {{text}}")
+    @Filter(value = "nana点歌 {{text}}")
     public void sendMusic(GroupMessageEvent event, @FilterValue("text") String text){
         var params= new HashMap<String,Object>();
         params.put("msg",text.trim());

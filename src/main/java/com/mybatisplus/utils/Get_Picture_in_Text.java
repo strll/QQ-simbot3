@@ -32,9 +32,7 @@ public class Get_Picture_in_Text {
             }
 
         }
-        if (re.equals("")){
-            return null;
-        }
+
         return messagesBuilder;
     }
 }

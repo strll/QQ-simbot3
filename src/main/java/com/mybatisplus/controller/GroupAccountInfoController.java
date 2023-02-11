@@ -74,7 +74,8 @@ public class GroupAccountInfoController implements ApplicationRunner {
 
         MiraiForwardMessageBuilder miraiForwardMessageBuilder = new MiraiForwardMessageBuilder();
         var messagesBuilder = new MessagesBuilder();
-        messagesBuilder.append("目前nana有一下几个功能:\n 1.关键词触发" +
+        messagesBuilder.append("目前nana有一下几个功能:" +
+                "\n 1.关键词触发" +
                 "\n 2.学习功能 发送 nana学习 可以触发 " +
                 "\n 学习第一次发送的是key要求key必须是字符(建议出发关键字不要过短因为查询用的是模糊查询) " +
                 "\n 第二次发送的是value value可以是图片 " +
@@ -86,7 +87,7 @@ public class GroupAccountInfoController implements ApplicationRunner {
                 "\n 如果机器人出现bug请管理员及时禁言 " +
                 "\n 8.nana天气 新增天气查询(2022.8.15)" +
                 "\n 9.nana模块管理" +
-                "\n nana听歌  (示例:nana听歌 Hurt)" +
+                "\n nana点歌  (示例:nana点歌Hurt)" +
                 "\n 11.nana每日新闻" +
                 "\n 12.nana微博热搜" +
                 "\n 13.nana历史上的今天" +
