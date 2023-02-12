@@ -177,7 +177,7 @@ public class GroupAccountInfoController implements ApplicationRunner {
         for (Long integer : blackset) {
             sb.append(integer + "\n");
         }
-        event.getSource().sendAsync("黑名单中已存在的QQ号有:\n" + sb);
+       event.getSource().sendBlocking("黑名单中已存在的QQ号有:\n" + sb);
     }
 
 
@@ -209,7 +209,7 @@ public class GroupAccountInfoController implements ApplicationRunner {
             sb.append(integer + "\n");
 
         }
-        event.getSource().sendAsync("黑名单中已存在的QQ号有:\n" + sb);
+       event.getSource().sendBlocking("黑名单中已存在的QQ号有:\n" + sb);
     }
 
 
@@ -230,9 +230,9 @@ public class GroupAccountInfoController implements ApplicationRunner {
 
 
             if (add) {
-                event.getSource().sendAsync("添加成功");
+               event.getSource().sendBlocking("添加成功");
             } else {
-                event.getSource().sendAsync("已存在该群");
+               event.getSource().sendBlocking("已存在该群");
             }
         }
     }
@@ -252,9 +252,9 @@ public class GroupAccountInfoController implements ApplicationRunner {
 
 
             if (add) {
-                event.getSource().sendAsync("取消成功");
+               event.getSource().sendBlocking("取消成功");
             } else {
-                event.getSource().sendAsync("取消失败");
+               event.getSource().sendBlocking("取消失败");
             }
         }
     }
@@ -269,6 +269,7 @@ public class GroupAccountInfoController implements ApplicationRunner {
     public void onGroupMsg(GroupMessageEvent event) throws IOException {
         var group = event.getGroup();
         String accountCode = event.getAuthor().getId().toString();  //获取发送人的QQ号
+
         if (groupReply.contains(Integer.valueOf(event.getGroup().getId().toString())) && !blackset.contains(Long.parseLong(accountCode))) {
             String valuemessage = "";
             for (love.forte.simbot.message.Message.Element<?> message : event.getMessageContent().getMessages()) {
@@ -283,7 +284,7 @@ public class GroupAccountInfoController implements ApplicationRunner {
                     //校验text中是否含有url 如果有url的话解析并发送图片
                     try {
                         MessagesBuilder messagesBuilder1 = get_picture.get(text1);
-                        event.replyAsync(messagesBuilder1.build());
+                        event.getSource().sendBlocking(messagesBuilder1.build());
                     }catch (Exception e){
 
                     }
@@ -301,11 +302,11 @@ public class GroupAccountInfoController implements ApplicationRunner {
                                 MessagesBuilder messagesBuilder = new MessagesBuilder();
                                 messagesBuilder.image(Resource.of(new URL(messages.get(0).getUrl())));
                                 Messages build = messagesBuilder.build();
-                                event.getSource().sendAsync(build);
+                               event.getSource().sendBlocking(build);
                             } else {
                                 String v = messages.get(0).getValuemessage();
                                 MessagesBuilder message2 = Cat_to_message.getMessage(messages.get(0).getValuemessage());
-                                event.getSource().sendAsync(message2.build());
+                               event.getSource().sendBlocking(message2.build());
                             }
 
                         } else {
@@ -321,11 +322,12 @@ public class GroupAccountInfoController implements ApplicationRunner {
                                 }
 
                                 Messages build = messagesBuilder.build();
-                                event.getSource().sendAsync(build);
+                               event.getSource().sendBlocking(build);
+
                             } else {
                                 String v = messages.get(i).getValuemessage();
                                 MessagesBuilder message2 = Cat_to_message.getMessage(v);
-                                event.getSource().sendAsync(message2.build());
+                               event.getSource().sendBlocking(message2.build());
                             }
                         }
                     }
@@ -362,33 +364,26 @@ public class GroupAccountInfoController implements ApplicationRunner {
                 }
                 if (message instanceof At) {
                     ID targetId = ((At) message).getTarget();
-                    GroupMember targetMember = group.getMember(targetId);
-                    if (targetMember == null) {
-                        log.info(MessageFormat.format("[AT消息:未找到目标用户: {0} ]", targetId));
-                    } else {
-                        log.info(MessageFormat.format("[AT消息: @{0}( {1} )", targetMember.getNickOrUsername(), targetMember.getId()));
-//                        Gson gson = new Gson();
-//                        Map<String, Object> params = new HashMap<>();
-//                        params.put("model", "text-davinci-003");
-//                        params.put("prompt",event.getMessageContent().getPlainText());
-//                        params.put("max_tokens", 4000);
-//                        String post = openai_api.getPost("https://api.openai.com/v1/completions", gson.toJson(params));
-//                        openAiData openAiData = gson.fromJson(post, openAiData.class);
-//                        for (int i = 0; i < openAiData.getChoices().size(); i++) {
-//                            event.replyAsync(openAiData.getChoices().get(i).getText());
-//                            log.info(openAiData.getChoices().get(i).getText());
-//                        }
-                        event.replyAsync(random_say.say() );
+                    if(targetId.toString().equals(event.getBot().getId().toString()))
+                    {
+                        GroupMember targetMember = group.getMember(targetId);
+                        if (targetMember == null) {
+                            //             log.info(MessageFormat.format("[AT消息:未找到目标用户: {0} ]", targetId));
+                        } else {
+                            //               log.info(MessageFormat.format("[AT消息: @{0}( {1} )", targetMember.getNickOrUsername(), targetMember.getId()));
+                            event.getSource().sendBlocking(random_say.say() );
 
+                        }
+
+
+                        //  String say = random_say.say();
+                        if (message instanceof MiraiForwardMessage miraiForwardMessage) {
+                            miraiForwardMessage.getOriginalForwardMessage().getNodeList().forEach(a -> {
+                                log.info(MessageFormat.format("[转发消息: \n内容: {0} ]", a.getMessageChain()));
+                            });
+                        }
                     }
 
-
-                  //  String say = random_say.say();
-                    if (message instanceof MiraiForwardMessage miraiForwardMessage) {
-                        miraiForwardMessage.getOriginalForwardMessage().getNodeList().forEach(a -> {
-                            log.info(MessageFormat.format("[转发消息: \n内容: {0} ]", a.getMessageChain()));
-                        });
-                    }
 
                 }
             }
