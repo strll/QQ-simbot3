@@ -58,6 +58,8 @@ public class BotService {
 @Autowired
     private GetNowWeather_app getNowWeather_app;
 
+@Autowired
+    private Get_Talk getTalk;
     public ResponseResult GetNowWeather(String city){
         try {
             String s = getNowWeather_app.GetWeather(city);
@@ -222,9 +224,20 @@ public class BotService {
                     appAccountEnum.setMsg(messages.get(0).getValuemessage());
                 }
             }
+            return   ResponseResult.okResult( appAccountEnum);
+        }else
+        {
+            try {
+                AppAccountEnum appAccountEnum1 = new AppAccountEnum();
+                String talk = getTalk.get_talk(msg);
+                appAccountEnum1.setMsg(talk);
+                return   ResponseResult.okResult( appAccountEnum1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        return   ResponseResult.okResult( appAccountEnum);
 
-    return   ResponseResult.okResult( appAccountEnum);
     }
 
 
