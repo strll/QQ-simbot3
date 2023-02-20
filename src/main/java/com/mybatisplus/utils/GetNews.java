@@ -14,11 +14,37 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 @Service
 public class GetNews {
             //因为信息过长所以需要以聊天列表的形式发送 经过测试图片和文字在一起容易被风控所以分开发送
+            public   ArrayList<String> EveryDayNews() throws IOException {
+                ArrayList<String> strings = new ArrayList<>();
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode jsonNode = mapper.readValue(new URL("https://www.zhihu.com/api/v4/columns/c_1261258401923026944/items"), JsonNode.class);
+                String contentHtml = jsonNode.get("data").get(0).get("content").asText();
+                //   System.out.println(contentHtml);
+                Document parse = Jsoup.parse(contentHtml);
+                StringBuilder result = new StringBuilder();
+                Elements allElements = parse.getAllElements();
+                for (Element element : allElements) {
+                    if("img".equals(element.tagName())){
+                        String url = element.attr("src");
+                        strings.add(url);
+
+                    }else if("p".equals(element.tagName())) {
+                        String content = element.text().trim();
+                        strings.add(content);
+                    }
+                }
+
+
+                return strings;
+            }
+
     public  MiraiForwardMessageBuilder EveryDayNews(GroupMessageEvent event) throws IOException {
         MiraiForwardMessageBuilder miraiForwardMessageBuilder=new MiraiForwardMessageBuilder();
 

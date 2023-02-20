@@ -30,7 +30,6 @@ public class Get_Cartoon_News {
                     .append("新闻内容:\n").append(o.getString("description")).append("\n")
                     .append("新闻来源:").append(o.getString("source")).append("\n")
                     .append("新闻详情:").append(o.getString("url")).append("\n")
-               //     .append(MakeNeko.MakePicture(o.getString("picUrl")))
                    .append("end")
             ;
         }

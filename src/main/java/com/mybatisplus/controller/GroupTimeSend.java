@@ -116,12 +116,13 @@ public class GroupTimeSend {
                  String historytody = historyTody.historytody();
                 String[] split = historytody.split("end");
                 MiraiForwardMessageBuilder miraiForwardMessageBuilder=new MiraiForwardMessageBuilder();
-                var messagesBuilder = new MessagesBuilder();
+
                 for (String s : split) {
+                    var messagesBuilder = new MessagesBuilder();
                     messagesBuilder.append(s);
                     miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(),messagesBuilder.build());
                 }
-                event.replyAsync ("早上好,这是历史上的今天");
+                event.getSource().sendBlocking("早上好,这是历史上的今天");
                 // 发送消息
                 event.getSource().sendAsync( miraiForwardMessageBuilder.build());
             }

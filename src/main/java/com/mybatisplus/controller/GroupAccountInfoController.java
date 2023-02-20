@@ -81,17 +81,15 @@ public class GroupAccountInfoController implements ApplicationRunner {
                 "\n 第二次发送的是value value可以是图片 " +
                 "\n 3.删除功能 发送nana删除 可以触发 " +
                 "\n 4.nana图片 发送随机二次元图片(2022.8.1新增) " +
-                "\n 5.nana查询关键词 根据nana自动触发的返回值查询触发词(2022.8.2新增)" +
                 "\n 6.定时发送固定信息(2022.8.3新增)" +
                 "\n 7.新增权限管理(2022.8.3新增)" +
                 "\n 如果机器人出现bug请管理员及时禁言 " +
                 "\n 8.nana天气 新增天气查询(2022.8.15)" +
                 "\n 9.nana模块管理" +
-                "\n nana点歌  (示例:nana点歌Hurt)" +
+                "\n 10.nana点歌(示例:nana点歌Hurt)" +
                 "\n 11.nana每日新闻" +
                 "\n 12.nana微博热搜" +
-                "\n 13.nana历史上的今天" +
-                "\n 14.戳一戳nana发送信息"
+                "\n 13.nana历史上的今天"
                 + "\n 15.nana翻译(示例: nana翻译 hello)"
                 + "\n 16.nana百度(使用方法示例: nana百度 春节) "
                 + "\n 17.nana查询 使用方法同上(改接口失效请使用百度功能进行搜索)"
@@ -133,13 +131,12 @@ public class GroupAccountInfoController implements ApplicationRunner {
                 "nana关闭学习模块\n " +
                 "nana关闭定时模块\n" +
                 "nana启动定时模块\n" +
-                "nana关闭天气模块\n" +
-                "nana启动天气模块 (超级管理员使用)\n"
+                "nana关闭天气模块\n"
                 + "nana添加群定时\n"
                 + "nana取消群定时\n"
-                + "nana添加群回复\n"
+                + "nana添加群回复 \n"
                 + "nana取消群回复\n"
-                + "nana开启聊天模块 \n"
+                + "nana开启聊天模块 (这个模块是nana聊天) \n"
                 + "nana关闭聊天模块\n"
                 + "nana添加群今天吃什么\n"
                 + "nana取消群今天吃什么 \n"

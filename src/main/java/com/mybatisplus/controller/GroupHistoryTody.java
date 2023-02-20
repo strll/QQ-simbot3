@@ -29,14 +29,14 @@ public class GroupHistoryTody {
     public void sendNews(GroupMessageEvent event) throws IOException {
          String historytody = historyTody.historytody();
         MiraiForwardMessageBuilder miraiForwardMessageBuilder=new MiraiForwardMessageBuilder();
-        var messagesBuilder = new MessagesBuilder();
+
 
 
             String[] split = historytody.split("end");
             for (String s : split) {
+                var messagesBuilder = new MessagesBuilder();
                 messagesBuilder.append(s);
                 miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(),messagesBuilder.build());
-
             }
 
 
