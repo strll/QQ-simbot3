@@ -14,6 +14,9 @@ import java.util.concurrent.TimeUnit;
 public class MyRedis {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    public StringRedisTemplate getStringRedisTemplate(){
+        return stringRedisTemplate;
+    }
 //增
     public String setAdd(String key,String value){
         Long add = stringRedisTemplate.opsForSet().add(key, value);

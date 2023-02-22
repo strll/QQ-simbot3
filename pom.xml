@@ -14,8 +14,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <simbot.version>3.0.0-M6</simbot.version>
-        <simbot-component-mirai.version>3.0.0.0-M4</simbot-component-mirai.version>
+        <simbot.version>3.0.0-RC.3</simbot.version>
+        <simbot-component-mirai.version>3.0.0.0-M5</simbot-component-mirai.version>
     </properties>
 
     <!-- Spring Boot 相关。此处选择使用parent对Spring进行版本控制 -->
@@ -50,7 +50,17 @@
             <version>${simbot-component-mirai.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+        </dependency>
 
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+        </dependency>
         <!-- HttpClinet 核心包 -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

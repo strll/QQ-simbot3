@@ -1,9 +1,7 @@
 package com.mybatisplus.entity.app;
 
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import org.springframework.data.annotation.CreatedDate;
 @TableName(value = "app_user")
 public class AppUser {
@@ -14,7 +12,7 @@ public class AppUser {
   private String password;
   private String mail;
 
-  @CreatedDate
+  @TableField(fill = FieldFill.INSERT)
   private String createDate;
 
 
