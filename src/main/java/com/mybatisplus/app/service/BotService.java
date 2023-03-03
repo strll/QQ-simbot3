@@ -176,6 +176,8 @@ public class BotService {
         }
         return   ResponseResult.okResult( appAccountEnum);
     }
+@Autowired
+private GetChatGpt getChatGpt;
 
     public ResponseResult AccountInfo(String msg){
 
@@ -229,10 +231,10 @@ public class BotService {
         {
             try {
                 AppAccountEnum appAccountEnum1 = new AppAccountEnum();
-                String talk = getTalk.get_talk(msg);
+                String talk = getChatGpt.Get(msg);
                 appAccountEnum1.setMsg(talk);
                 return   ResponseResult.okResult( appAccountEnum1);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

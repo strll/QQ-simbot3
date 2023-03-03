@@ -104,7 +104,8 @@ public class GroupAccountInfoController implements ApplicationRunner {
                 + "\n 23.nana小鸡词典 (示例: nana小鸡词典 盐系) 微博恶意盗取小鸡词典文库 小鸡词典在于微博的官司中入不敷出 现网站服务器因为某些特殊原因永久关闭 "
                 + "\n 24.nana刷新"
                 + "\n 25.回复功能中新增图片解析 可以根据发送的链接访问并且生产图片 (效率可能较低 2023.1.26新增)" +
-                "\n 26.nana搜图 (2023.2.9新增)"
+                "\n 26.nana搜图 (2023.2.9新增)" +
+                "\n 27./q 访问gpt(示例 /q 你好)"
         );
         miraiForwardMessageBuilder.add(event.getBot().getId(), event.getBot().getUsername(), messagesBuilder.build());
         event.getSource().sendBlocking(miraiForwardMessageBuilder.build());

@@ -3,6 +3,7 @@ package com.mybatisplus.controller;
 
 import com.mybatisplus.entity.Groupid_and_Authorid;
 import com.mybatisplus.service.IAdminService;
+import com.mybatisplus.utils.GetChatGpt;
 import com.mybatisplus.utils.Get_Talk;
 import com.mybatisplus.utils.MyRedis;
 import love.forte.simboot.annotation.Filter;
@@ -26,6 +27,9 @@ import java.util.Set;
 
 @Controller
 public class Group_Talk  implements ApplicationRunner {
+
+    @Autowired
+    private GetChatGpt getChatGpt;
 
     @Autowired
     private Get_Talk getTalk;
@@ -138,7 +142,7 @@ if (group_talk.equals("1")){
 
                     }
                 }
-                String talk = getTalk.get_talk(s);
+                String talk = getChatGpt.Get(s);
                 event.replyAsync(talk);
 
             }
