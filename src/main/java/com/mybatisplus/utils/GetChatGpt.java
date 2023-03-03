@@ -37,7 +37,7 @@ public class GetChatGpt {
                     .header("Connection","keep-alive")
                     .header("Authorization", "Bearer " + key)
                     .requestBody(requestBody.toString())
-                    .timeout(20*1000)
+                    .timeout(40*1000)
                     .ignoreContentType(true)
                     .ignoreHttpErrors(true)
                     .post();
