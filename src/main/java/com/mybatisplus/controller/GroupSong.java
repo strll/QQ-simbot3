@@ -2,6 +2,7 @@ package com.mybatisplus.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.mybatisplus.entity.Muicpojo;
 import com.mybatisplus.entity.music.musicData;
 import com.mybatisplus.entity.music.musicJsonRootBean;
 import com.mybatisplus.utils.GetMuic;
@@ -48,33 +49,43 @@ public class GroupSong {
     @Listener
     @Filter(value = "nana点歌 {{text}}")
     public void sendMusic(GroupMessageEvent event, @FilterValue("text") String text){
-        var params= new HashMap<String,Object>();
-        params.put("msg",text.trim());
-        params.put("num",1);
-        params.put("n",1);
         try {
-            String musicJson = OK3HttpClient.httpGet("https://www.dreamling.xyz/API/163/music/api.php", params, null);
-            log.info(musicJson);
-            musicJsonRootBean musicData = new Gson().fromJson(musicJson, musicJsonRootBean.class);
-            int code = musicData.getCode();
-            if (code==200){
-                var data = musicData.getData();
-                String getPicture = data.getCover();
-                String getMusic = data.getMusic();
-                String getNickUser = data.getSinger();
-                String getMusicUrl = data.getMusic_Url();
-                String getUrl = data.getUrl();
-                var miraiMusicShare = new MiraiMusicShare(MusicKind.NeteaseCloudMusic, getMusic, getNickUser,getMusicUrl, getPicture, getUrl);
+            Muicpojo muicV3 = getMuic.getMuicV3(text);
+            var miraiMusicShare = new MiraiMusicShare(MusicKind.NeteaseCloudMusic,  muicV3.getMusic(), muicV3.getNickUser(),muicV3.getMusicUrl(), muicV3.getPicture(), muicV3.getUrl());
 
-                event.getSource().sendBlocking(miraiMusicShare);
-            }else {
-                log.error("code异常.....");
-                event.replyAsync("code异常..： "+code);
-            }
-        } catch (JsonSyntaxException e) {
-            log.error(MessageFormat.format("歌曲插件异常,疑似接口出现错误: {0}", e.getMessage()));
+            event.getSource().sendBlocking(miraiMusicShare);
+
+        } catch (IOException e) {
+            e.printStackTrace();
             event.replyAsync(MessageFormat.format("歌曲插件异常,疑似接口出现错误: {0}", e.getMessage()));
         }
+//        var params= new HashMap<String,Object>();
+//        params.put("msg",text.trim());
+//        params.put("num",1);
+//        params.put("n",1);
+//        try {
+//            String musicJson = OK3HttpClient.httpGet("https://www.dreamling.xyz/API/163/music/api.php", params, null);
+//            log.info(musicJson);
+//            musicJsonRootBean musicData = new Gson().fromJson(musicJson, musicJsonRootBean.class);
+//            int code = musicData.getCode();
+//            if (code==200){
+//                var data = musicData.getData();
+//                String getPicture = data.getCover();
+//                String getMusic = data.getMusic();
+//                String getNickUser = data.getSinger();
+//                String getMusicUrl = data.getMusic_Url();
+//                String getUrl = data.getUrl();
+//                var miraiMusicShare = new MiraiMusicShare(MusicKind.NeteaseCloudMusic, getMusic, getNickUser,getMusicUrl, getPicture, getUrl);
+//
+//                event.getSource().sendBlocking(miraiMusicShare);
+//            }else {
+//                log.error("code异常.....");
+//                event.replyAsync("code异常..： "+code);
+//            }
+//        } catch (JsonSyntaxException e) {
+//            log.error(MessageFormat.format("歌曲插件异常,疑似接口出现错误: {0}", e.getMessage()));
+//            event.replyAsync(MessageFormat.format("歌曲插件异常,疑似接口出现错误: {0}", e.getMessage()));
+//        }
     }
 
 

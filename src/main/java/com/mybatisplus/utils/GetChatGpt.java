@@ -42,8 +42,8 @@ public class GetChatGpt {
                     .ignoreHttpErrors(true)
                     .post();
         } catch (IOException e) {
-            e.printStackTrace();
-            return "ChatGpt失效 请联系管理员处理";
+
+            return "ChatGpt出现了一些小问题";
         }
         Element body = document.body();
         String s = body.toString();

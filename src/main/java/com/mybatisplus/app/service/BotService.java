@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.mybatisplus.entity.Message;
+import com.mybatisplus.entity.Muicpojo;
 import com.mybatisplus.entity.Today_Eat;
 import com.mybatisplus.entity.app.AppAccountEnum;
 import com.mybatisplus.entity.app.ResponseResult;
 import com.mybatisplus.entity.app.Today_Eat_app;
+import com.mybatisplus.entity.music.musicData;
 import com.mybatisplus.entity.music.musicJsonRootBean;
 import com.mybatisplus.service.IMessageService;
 import com.mybatisplus.service.TodayEatService;
@@ -57,7 +59,8 @@ public class BotService {
     private GetWbTop10 getWbTop10;
 @Autowired
     private GetNowWeather_app getNowWeather_app;
-
+@Autowired
+private GetMuic getMuic;
 @Autowired
     private Get_Talk getTalk;
     public ResponseResult GetNowWeather(String city){
@@ -87,25 +90,46 @@ public class BotService {
     }
 
     public ResponseResult GetSong(String song){
-        var params= new HashMap<String,Object>();
-        params.put("msg",song);
-        params.put("num",1);
-        params.put("n",1);
         try {
-            String musicJson = OK3HttpClient.httpGet("https://www.dreamling.xyz/API/163/music/api.php", params, null);
 
-            musicJsonRootBean musicData = new Gson().fromJson(musicJson, musicJsonRootBean.class);
-            int code = musicData.getCode();
-            if (code==200){
-                var data = musicData.getData();
-                return   ResponseResult.okResult(musicData);
-            }else {
-                return   ResponseResult.okResult("获取歌曲失败");
-            }
-        } catch (JsonSyntaxException e) {
+//            this.msg = ref.data.data.data.url,
+//                    this.pic = ref.data.data.data.cover,
+//                    console.log(this.pic),
+//                    this.songer = ref.data.data.data.singer
+            Muicpojo muicV3 = getMuic.getMuicV3(song);
+            musicJsonRootBean musicJsonRootBean = new musicJsonRootBean();
+            musicJsonRootBean.setCode(200);
+            musicData musicData = new musicData();
+
+            musicData.setUrl(muicV3.getUrl());
+            musicData.setSinger(muicV3.getNickUser());
+            musicData.setCover(muicV3.getPicture()); //图片
+            musicJsonRootBean.setData(musicData);
+            return ResponseResult.okResult( musicJsonRootBean);
+        } catch (IOException e) {
+            e.printStackTrace();
             return   ResponseResult.okResult("歌曲插件异常,疑似接口出现错误");
-
         }
+
+//        var params= new HashMap<String,Object>();
+//        params.put("msg",song);
+//        params.put("num",1);
+//        params.put("n",1);
+//        try {
+//            String musicJson = OK3HttpClient.httpGet("https://www.dreamling.xyz/API/163/music/api.php", params, null);
+//
+//            musicJsonRootBean musicData = new Gson().fromJson(musicJson, musicJsonRootBean.class);
+//            int code = musicData.getCode();
+//            if (code==200){
+//                var data = musicData.getData();
+//                return   ResponseResult.okResult(musicData);
+//            }else {
+//                return   ResponseResult.okResult("获取歌曲失败");
+//            }
+//        } catch (JsonSyntaxException e) {
+//            return   ResponseResult.okResult("歌曲插件异常,疑似接口出现错误");
+//
+//        }
 
 
     }
