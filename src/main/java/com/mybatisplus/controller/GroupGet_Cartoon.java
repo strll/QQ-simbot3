@@ -51,7 +51,9 @@ public class GroupGet_Cartoon {
                 try {
                     document = Jsoup.connect("https://api.trace.moe/search?anilistInfo&url="+name)
                             .userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31")
+
                             .ignoreContentType(true)
+                            .timeout(50*1000)
                             .get();
                     Element body = document.body();
                     String body1 = document.select("body").toString().replace("</body>", "");
@@ -87,7 +89,8 @@ public class GroupGet_Cartoon {
 //                        msg.image(Resource.of(new URL(image1))).append("\n");
 //                        miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), msg.build());
 //                    }
-                event.getGroup().sendAsync(miraiForwardMessageBuilder.build());
+//                event.getGroup().sendAsync(miraiForwardMessageBuilder.build());
+                    event.getGroup().sendBlocking(miraiForwardMessageBuilder.build());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -56,13 +56,14 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     public int DeleteMessage(String text) {
         QueryWrapper<Message> messageQueryWrapper = new QueryWrapper<>();
         messageQueryWrapper.eq("keymessage",text);
-        Message message = mapper.selectOne(messageQueryWrapper);
-        try {
-            send_to_minio.Send_To_minio_Delete(message.getUrl());
-        }catch (Exception e){
-       
+       // Message message = mapper.selectOne(messageQueryWrapper);
+        List<Message> messages = mapper.selectList(messageQueryWrapper);
+        for (Message message : messages) {
+            try {
+                send_to_minio.Send_To_minio_Delete(message.getUrl());
+            }catch (Exception e){
+            }
         }
-
         int i =mapper.deletemessage(text);
         return i;
     }

@@ -57,8 +57,7 @@ private String key;
         params.put("testmode",1);
         params.put("numres",16);
         params.put("api_key",key);
-        var url="https://saucenao.com/search.php";
-
+        var url = "https://saucenao.com/search.php";
         var header = new HashMap<String, String>();
         header.put("cookie", "_ga=GA1.1.678918584.1673528436; cf_clearance=yzbMlU38VCL3ShOlAoFs064Y5wChSPRUZmdEt14TlME-1673754810-0-150; token=63c378ba6ab35; user=69680; auth=1f1c47f43b0ae73c920f85075aa23cdbd5efee86; _ga_LK5LRE77R3=GS1.1.1673773844.5.0.1673773844.0.0.0");
         header.put("Content-Type", "application/x-www-form-urlencoded");
@@ -66,29 +65,29 @@ private String key;
 
         var messagesBuilder = new MessagesBuilder();
         try {
-            sessionContext.waitingForNextMessage(qqId,GroupMessageEvent.Key,time,TimeUnit.SECONDS,(e,c)->{
-                if (!(c.getAuthor().getId().equals(id)&&c.getGroup().getId().equals(groupId))){
+            sessionContext.waitingForNextMessage(qqId, GroupMessageEvent.Key, time, TimeUnit.SECONDS, (e, c) -> {
+                if (!(c.getAuthor().getId().equals(id) && c.getGroup().getId().equals(groupId))) {
                     return false;
                 }
                 Messages messages = c.getMessageContent().getMessages();
                 for (Message.Element<?> message : messages) {
-                    if (message instanceof Image<?> image){
+                    if (message instanceof Image<?> image) {
                         c.getSource().sendBlocking("触发成功");
-                        params.put("url",image.getResource().getName());
+                        params.put("url", image.getResource().getName());
                         String httpImage = OK3HttpClient.httpGet(url, params, header);
                         log.info(httpImage);
                         data data = new Gson().fromJson(httpImage, data.class);
 
                         messagesBuilder.at(c.getAuthor().getId());
                         try {
-                            data.getResults().forEach(a->{
+                            data.getResults().forEach(a -> {
                                 double similarity = 0;
                                 try {
                                     similarity = Double.parseDouble(a.getHeader().getSimilarity().trim());
                                 } catch (NumberFormatException ec) {
                                     log.error(ec.getMessage());
                                 }
-                                if (similarity>=60){
+                                if (similarity >= 60) {
                                     messagesBuilder.text(MessageFormat.format("\n置信度: {0}\n", similarity)).text(MessageFormat.format("标题: {0}\n", a.getData().getTitle()));
                                     messagesBuilder.text(MessageFormat.format("PID: {0}\n", a.getData().getPixivId())).text(MessageFormat.format("作者: {0}\n", a.getData().getMemberName()));
                                     messagesBuilder.text(MessageFormat.format("作者ID: {0}\n", a.getData().getMemberId()));
@@ -97,13 +96,13 @@ private String key;
                                     } catch (MalformedURLException ec) {
                                         log.error(MessageFormat.format("无缩略图异常: {0}", ec.getMessage()));
                                     }
-                                    if (a.getData().getExtUrls()!=null){
-                                        var imageUrl= String.valueOf(a.getData().getExtUrls());
+                                    if (a.getData().getExtUrls() != null) {
+                                        var imageUrl = String.valueOf(a.getData().getExtUrls());
                                         messagesBuilder.text(MessageFormat.format("图片链接: {0}\n", imageUrl));
                                     }
                                 }
                             });
-                            miraiForwardMessageBuilder.add(event.getAuthor().getId(),event.getAuthor().getNickname(),messagesBuilder.build());
+                            miraiForwardMessageBuilder.add(event.getAuthor().getId(), event.getAuthor().getNickname(), messagesBuilder.build());
                             c.getSource().sendBlocking(miraiForwardMessageBuilder.build());
                         } catch (Exception ec) {
                             log.error(ec.getMessage());
@@ -116,8 +115,8 @@ private String key;
                 return true;
             });
         } catch (Exception e) {
-            log.error("会话超时退出: \n"+e.getMessage());
-            event.getSource().sendBlocking("会话超时退出~\n异常信息: "+e.getMessage());
+            log.error("会话超时退出: \n" + e.getMessage());
+            event.getSource().sendBlocking("会话超时退出~\n异常信息: " + e.getMessage());
         }
     }
 }
