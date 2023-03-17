@@ -21,7 +21,6 @@ public class LoginService {
     private MyRedis myRedis;
     public ResponseResult login(String username, String password){
         String pawd = SecureUtil.md5(password);
-
         QueryWrapper<AppUser> appUserQueryWrapper = new QueryWrapper<>();
         appUserQueryWrapper.eq("username",username);
         appUserQueryWrapper.eq("password",pawd);
@@ -64,7 +63,20 @@ try{
         try{
             String s = myRedis.get("resetpassword_codeService" + email);
             if (code.equals(s)){
-                String pawd = SecureUtil.md5(password);
+                QueryWrapper<AppUser> appUserQueryWrapper1 = new QueryWrapper<>();
+                appUserQueryWrapper1.eq("email",email);
+                try{
+                    AppUser appUser2 = appLoginMapper.selectOne(appUserQueryWrapper1);
+                    String mail = appUser2.getMail();
+                    if (!email.equals(mail)) {
+                        return ResponseResult.okResult("email错误");
+                    }
+                }catch (Exception e){
+                    return ResponseResult.okResult("email错误"); }
+
+
+
+            String pawd = SecureUtil.md5(password);
                 AppUser appUser = new AppUser();
                 appUser.setName(username);
                 appUser.setPassword(pawd);

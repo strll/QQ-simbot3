@@ -74,19 +74,6 @@ public class GroupGet_Cartoon {
                         miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), msg.build());
                         miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), msgurl.build());
                     }
-
-//                    for ( Object o : result) {
-//                        var  msg = new MessagesBuilder();
-//                        JSONObject o1 = (JSONObject) o;
-//                        String native_name = o1.getJSONObject("anilist").getJSONObject("title").get("native").toString();
-//                        //synonyms
-//                        msg.append("\nnative_name: "+native_name);
-//                        String synonyms = o1.getJSONObject("anilist").get("synonyms").toString();
-//                        msg.append("\nsynonyms: "+synonyms+"\n" );
-//                        String image1 = o1.getString("image").replaceAll("&amp;","&");
-//                        msg.image(Resource.of(new URL(image1))).append("\n");
-//                        miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), msg.build());
-//                    }
                 event.getGroup().sendAsync(miraiForwardMessageBuilder.build());
                 } catch (IOException e) {
                     e.printStackTrace();
