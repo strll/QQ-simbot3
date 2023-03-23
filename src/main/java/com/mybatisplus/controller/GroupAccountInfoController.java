@@ -371,7 +371,7 @@ public class GroupAccountInfoController implements ApplicationRunner {
 //                       System.out.println("来源是: " + from);
 //                       System.out.println("标题是"+title);
                        MessagesBuilder messagesBuilder = new MessagesBuilder();
-                       messagesBuilder.text("转发标题是：\n" + title +"\n"+ "地址是："+url+"\n"+"转发的来源是："+brief);
+                       messagesBuilder.text("转发标题是：\n" + title +"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
                        messagesBuilder.image(Resource.of(new URL(urlpic)));
                        Messages build = messagesBuilder.build();
                        //    event.replyAsync(build);
@@ -379,28 +379,6 @@ public class GroupAccountInfoController implements ApplicationRunner {
                     } catch (Exception e) {
                     log.info(e.getMessage());
                     }
-//                    JSONObject jsonObject = JSON.parseObject(s);
-//                    if(!Objects.isNull(jsonObject.get("desc").toString())){
-//                        String desc = jsonObject.get("desc").toString();
-//                        if (desc!=null&&desc.equals("哔哩哔哩")){
-//
-//                            String meta = jsonObject.get("meta").toString();
-//                            JSONObject json = JSON.parseObject(meta);
-//                            JSONObject  detail_1= (JSONObject) json.get("detail_1");
-//                            String url =  detail_1.get("qqdocurl").toString();
-//
-//                            Document parse = null;
-//                            try {
-//                                parse = Jsoup.parse(new URL(url), 3000);
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                            Elements elementsByClass = parse.getElementsByClass("desc-info desc-v2 open");
-//                            Element comment = parse.getElementById("v_desc");
-//                            event.getGroup().sendBlocking("视频的简介是:\n"+comment.text());
-//                        }
-//                    }
-
 
                 }
                 if (message instanceof At) {
