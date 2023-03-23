@@ -55,7 +55,8 @@ import java.util.*;
 public class GroupAccountInfoController implements ApplicationRunner {
     @Autowired
     private IMessageService service;
-
+@Autowired
+private GetBilil getBilil;
 
     private HashSet<Integer> groupReply = new HashSet();
     private HashSet<Long> blackset = new HashSet();
@@ -335,6 +336,8 @@ public class GroupAccountInfoController implements ApplicationRunner {
                     String urlpic=null;
                     String from=null;
                     String title=null;
+                    String url=null;
+                    String brief=null;
                     // 获取信息
                     String xmlString = ((SimbotOriginalMiraiMessage) message).getOriginalMiraiMessage().contentToString();
                    try{
@@ -342,8 +345,8 @@ public class GroupAccountInfoController implements ApplicationRunner {
                        DocumentBuilder builder = factory.newDocumentBuilder();
                        Document doc = builder.parse(new InputSource(new StringReader(xmlString)));
                        Element msgElement = doc.getDocumentElement();
-                       String url = msgElement.getAttribute("url");
-                       String brief = msgElement.getAttribute("brief");
+                       url = msgElement.getAttribute("url");
+                        brief = msgElement.getAttribute("brief");
                        NodeList summaryNodes = doc.getElementsByTagName("item");
                        // 如果找到了至少一个"summary"元素
                        if (summaryNodes.getLength() > 0) {
@@ -367,18 +370,39 @@ public class GroupAccountInfoController implements ApplicationRunner {
                            urlpic= summaryElement.getAttribute("icon");
 
                        }
-//                       System.out.println("视频链接是url:"+url);
-//                       System.out.println("图片url是" + urlpic);
-//                       System.out.println("brief:"+brief);
-//                       System.out.println("来源是: " + from);
-//                       System.out.println("标题是"+title);
+
+
+
+
+
+                       //    event.replyAsync(build);
+                       if("[QQ小程序]哔哩哔哩".equals(brief)){
+                           MessagesBuilder messagesBuilder = new MessagesBuilder();
+                           String s = getBilil.get(url);
+                           messagesBuilder.text( title +"\n"+"简介是:"+s+"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
+                           messagesBuilder.image(Resource.of(new URL(urlpic)));
+                           Messages build = messagesBuilder.build();
+                           event.getSource().sendBlocking(build);
+                       }else {
+                           MessagesBuilder messagesBuilder = new MessagesBuilder();
+                           messagesBuilder.text( title +"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
+                           messagesBuilder.image(Resource.of(new URL(urlpic)));
+                           Messages build = messagesBuilder.build();
+                           event.getSource().sendBlocking(build);
+                       }
+
+
+                    } catch (Exception e) {
                        MessagesBuilder messagesBuilder = new MessagesBuilder();
-                       messagesBuilder.text("转发标题是：\n" + title +"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
-                       messagesBuilder.image(Resource.of(new URL(urlpic)));
+                       if("[QQ小程序]哔哩哔哩".equals(brief)){
+                           String s = getBilil.get(url);
+                           messagesBuilder.text( title +"\n"+"简介是:"+s+"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
+                       }else {
+                           messagesBuilder.text("转发标题是：\n" + title +"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
+                       }
                        Messages build = messagesBuilder.build();
                        //    event.replyAsync(build);
                        event.getSource().sendBlocking(build);
-                    } catch (Exception e) {
                     log.info(e.getMessage());
                     }
 
