@@ -51,7 +51,9 @@ public class GroupGet_Cartoon {
                 try {
                     document = Jsoup.connect("https://api.trace.moe/search?anilistInfo&url="+name)
                             .userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31")
+
                             .ignoreContentType(true)
+                            .timeout(50*1000)
                             .get();
                     Element body = document.body();
                     String body1 = document.select("body").toString().replace("</body>", "");
@@ -74,7 +76,21 @@ public class GroupGet_Cartoon {
                         miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), msg.build());
                         miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), msgurl.build());
                     }
-                event.getGroup().sendAsync(miraiForwardMessageBuilder.build());
+
+//                    for ( Object o : result) {
+//                        var  msg = new MessagesBuilder();
+//                        JSONObject o1 = (JSONObject) o;
+//                        String native_name = o1.getJSONObject("anilist").getJSONObject("title").get("native").toString();
+//                        //synonyms
+//                        msg.append("\nnative_name: "+native_name);
+//                        String synonyms = o1.getJSONObject("anilist").get("synonyms").toString();
+//                        msg.append("\nsynonyms: "+synonyms+"\n" );
+//                        String image1 = o1.getString("image").replaceAll("&amp;","&");
+//                        msg.image(Resource.of(new URL(image1))).append("\n");
+//                        miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), msg.build());
+//                    }
+//                event.getGroup().sendAsync(miraiForwardMessageBuilder.build());
+                    event.getGroup().sendBlocking(miraiForwardMessageBuilder.build());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -34,7 +34,6 @@ public class GetNews {
                     if("img".equals(element.tagName())){
                         String url = element.attr("src");
                         strings.add(url);
-
                     }else if("p".equals(element.tagName())) {
                         String content = element.text().trim();
                         strings.add(content);

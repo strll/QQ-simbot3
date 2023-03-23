@@ -18,6 +18,6 @@ public class Privite_Talk {
     @Listener
     public void openAi(FriendMessageEvent event) throws Exception {
         String next = new Scanner(event.getMessageContent().getPlainText()).next();
-        event.replyAsync(getChatGpt.Get(next));
+        event.replyBlocking((getChatGpt.Get(next)));
     }
 }

@@ -103,72 +103,77 @@ public class GroupStudySessionAreaEvent implements ApplicationRunner {
       String accountCode = event.getAuthor().getId().toString();  //获取发送人的QQ号
       String groupid = group.getId().toString();
       Messages messages = event.getMessageContent().getMessages();
-      final int time = 30;
-      event.replyAsync ("请问您要触发的关键词是什么?");
-
-      message = new  Message();
-
-      sessionContext.waitingForNextMessage(accountCode , GroupMessageEvent.Key, time, TimeUnit.SECONDS, (e, c) ->{
-          if (!(c.getAuthor().getId().toString().equals(accountCode) && c.getGroup().getId().toString().equals(groupid ))) {
-              return false;
-          }
-          if (e instanceof TimeoutException) {
-              c.replyAsync("超时啦");
-          }
-          Messages messages1 = c.getMessageContent().getMessages();
-          for (love.forte.simbot.message.Message.Element<?> element :messages1) {
-              if(element instanceof Text text){
-                  message.setKeymessage(text.getText());
+      Set<String> groupStudy = redis.setfindAll("groupStudy");
+      if (groupStudy.contains(groupid)){
+          final int time = 30;
+          event.replyAsync ("请问您要触发的关键词是什么?");
+          message = new  Message();
+          sessionContext.waitingForNextMessage(accountCode , GroupMessageEvent.Key, time, TimeUnit.SECONDS, (e, c) ->{
+              if (!(c.getAuthor().getId().toString().equals(accountCode) && c.getGroup().getId().toString().equals(groupid ))) {
+                  return false;
               }
-          }
-          return true;
-      });
-      event.replyAsync ( "请继续输入触发关键词之后要返回什么 (目前支持返回文字和图片):");
-            StringBuilder sendvalue=new StringBuilder();
-      StringBuilder sendurl=new StringBuilder();
-
-      sessionContext.waitingForNextMessage(accountCode , GroupMessageEvent.Key, time, TimeUnit.SECONDS, (e, c) ->{
-          if (!(c.getAuthor().getId().toString().equals(accountCode) && c.getGroup().getId().toString().equals(groupid ))) {
-              return false;
-          }
-          if (e instanceof TimeoutException) {
-              c.replyAsync("超时啦");
-          }
-          message.setQq(accountCode);
-          Messages messages1 = c.getMessageContent().getMessages();
-          for (love.forte.simbot.message.Message.Element<?> element :messages1) {
-              if(element instanceof Text text){
-                  sendvalue.append(text.getText());
-          //        message.setValuemessage(text.getText());
+              if (e instanceof TimeoutException) {
+                  c.replyAsync("超时啦");
               }
-              if (element instanceof Image<?> image) {
-                  String url = image.getResource().getName();
-                  String s = null;
-                  try {
-                      s = send_to_minio.Send_ToMinio_Picture_new(url);
-                      String s1 = MakeNeko.MakePicture(s);
-                      sendurl.append(s+"\n");
-                      sendvalue.append(s1);
-                  } catch (IOException ex) {
-                      ex.printStackTrace();
+              Messages messages1 = c.getMessageContent().getMessages();
+              for (love.forte.simbot.message.Message.Element<?> element :messages1) {
+                  if(element instanceof Text text){
+                      message.setKeymessage(text.getText());
                   }
               }
-          }
-          message.setUrl( sendurl.toString());
-          message.setValuemessage(sendvalue.toString());
-          return true;
-      });
-if (message.getValuemessage()!=null){
-    int study = service.InsertMessage(message);
-    if (study <1){
-        event.replyAsync ( "学习失败");
-    }else{
-        event.replyAsync ( "学习成功");
-    }
+              return true;
+          });
+          event.replyAsync ( "请继续输入触发关键词之后要返回什么 (目前支持返回文字和图片):");
+          StringBuilder sendvalue=new StringBuilder();
+          StringBuilder sendurl=new StringBuilder();
 
-}else{
-    event.replyAsync ( "学习失败");
-}
+          sessionContext.waitingForNextMessage(accountCode , GroupMessageEvent.Key, time, TimeUnit.SECONDS, (e, c) ->{
+              if (!(c.getAuthor().getId().toString().equals(accountCode) && c.getGroup().getId().toString().equals(groupid ))) {
+                  return false;
+              }
+              if (e instanceof TimeoutException) {
+                  c.replyAsync("超时啦");
+              }
+              message.setQq(accountCode);
+              Messages messages1 = c.getMessageContent().getMessages();
+              for (love.forte.simbot.message.Message.Element<?> element :messages1) {
+                  if(element instanceof Text text){
+                      sendvalue.append(text.getText());
+                      //        message.setValuemessage(text.getText());
+                  }
+                  if (element instanceof Image<?> image) {
+                      String url = image.getResource().getName();
+                      String s = null;
+                      try {
+                          s = send_to_minio.Send_ToMinio_Picture_new(url);
+                          String s1 = MakeNeko.MakePicture(s);
+                          sendurl.append(s+"\n");
+                          sendvalue.append(s1);
+                      } catch (IOException ex) {
+                          ex.printStackTrace();
+                      }
+                  }
+              }
+              message.setUrl( sendurl.toString());
+              message.setValuemessage(sendvalue.toString());
+              return true;
+          });
+          if (message.getValuemessage()!=null){
+              int study = service.InsertMessage(message);
+              if (study <1){
+                  event.replyAsync ( "学习失败");
+              }else{
+                  event.replyAsync ( "学习成功");
+              }
+
+          }else{
+              event.replyAsync ( "学习失败");
+          }
+      }else {
+          event.replyAsync ( "管理员未在该群中开启学习功能");
+      }
+
+
 
 
 

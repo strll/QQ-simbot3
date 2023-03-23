@@ -135,6 +135,8 @@ public class GroupAccountInfoController implements ApplicationRunner {
         var messagesBuilder = new MessagesBuilder();
         messagesBuilder.append("nana启动学习模块\n" +
                 "nana关闭学习模块\n " +
+                "nana启动删除模块\n"+
+                "nana关闭删除模块\n"+
                 "nana关闭定时模块\n" +
                 "nana启动定时模块\n" +
                 "nana关闭天气模块\n"
