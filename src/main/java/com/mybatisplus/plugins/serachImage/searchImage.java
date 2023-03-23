@@ -60,7 +60,8 @@ private String key;
         var url="https://saucenao.com/search.php";
 
         var header = new HashMap<String, String>();
-        header.put("cookie", "_ga=GA1.1.678918584.1673528436; cf_clearance=yzbMlU38VCL3ShOlAoFs064Y5wChSPRUZmdEt14TlME-1673754810-0-150; token=63c378ba6ab35; user=69680; auth=1f1c47f43b0ae73c920f85075aa23cdbd5efee86; _ga_LK5LRE77R3=GS1.1.1673773844.5.0.1673773844.0.0.0");
+        header.put("cookie", "auth=0d70d389b73c3d57b8d33f10be7815b3290b846e;user=99199;token=6413deff682c7;cf_clearance=sj0ROrgulXlHquY48J62yLtXs7K8cIdsS4rvG0aQ4p0-1679023871-0-160");
+        // header.put("cookie", "_ga=GA1.1.678918584.1673528436; cf_clearance=_ykkAq_tUmnqbJc5g9fmDAJaGb53VUGXI.0QG2VHAwM-1678499664-0-160; token=63c378ba6ab35; user=69680; auth=1f1c47f43b0ae73c920f85075aa23cdbd5efee86; _ga_LK5LRE77R3=GS1.1.1673773844.5.0.1673773844.0.0.0");
         header.put("Content-Type", "application/x-www-form-urlencoded");
         header.put("accept-language", "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6");
 

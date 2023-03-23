@@ -28,8 +28,6 @@ import love.forte.simbot.event.GroupMessageEvent;
 import love.forte.simbot.resources.Resource;
 import net.mamoe.mirai.message.data.RichMessage;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -37,8 +35,15 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
@@ -104,8 +109,8 @@ public class GroupAccountInfoController implements ApplicationRunner {
                 + "\n 23.nana小鸡词典 (示例: nana小鸡词典 盐系) 微博恶意盗取小鸡词典文库 小鸡词典在于微博的官司中入不敷出 现网站服务器因为某些特殊原因永久关闭 "
                 + "\n 24.nana刷新"
                 + "\n 25.回复功能中新增图片解析 可以根据发送的链接访问并且生产图片 (效率可能较低 2023.1.26新增)" +
-                "\n 26.nana搜图 (2023.2.9新增)" +
-                "\n 27./q 访问gpt(示例 /q 你好)"
+                "" +
+                "\n 26./q 访问gpt(示例 /q 你好)"
         );
         miraiForwardMessageBuilder.add(event.getBot().getId(), event.getBot().getUsername(), messagesBuilder.build());
         event.getSource().sendBlocking(miraiForwardMessageBuilder.build());
@@ -175,7 +180,7 @@ public class GroupAccountInfoController implements ApplicationRunner {
         for (Long integer : blackset) {
             sb.append(integer + "\n");
         }
-       event.getSource().sendBlocking("黑名单中已存在的QQ号有:\n" + sb);
+        event.getSource().sendBlocking("黑名单中已存在的QQ号有:\n" + sb);
     }
 
 
@@ -207,7 +212,7 @@ public class GroupAccountInfoController implements ApplicationRunner {
             sb.append(integer + "\n");
 
         }
-       event.getSource().sendBlocking("黑名单中已存在的QQ号有:\n" + sb);
+        event.getSource().sendBlocking("黑名单中已存在的QQ号有:\n" + sb);
     }
 
 
@@ -228,9 +233,9 @@ public class GroupAccountInfoController implements ApplicationRunner {
 
 
             if (add) {
-               event.getSource().sendBlocking("添加成功");
+                event.getSource().sendBlocking("添加成功");
             } else {
-               event.getSource().sendBlocking("已存在该群");
+                event.getSource().sendBlocking("已存在该群");
             }
         }
     }
@@ -250,9 +255,9 @@ public class GroupAccountInfoController implements ApplicationRunner {
 
 
             if (add) {
-               event.getSource().sendBlocking("取消成功");
+                event.getSource().sendBlocking("取消成功");
             } else {
-               event.getSource().sendBlocking("取消失败");
+                event.getSource().sendBlocking("取消失败");
             }
         }
     }
@@ -271,19 +276,13 @@ public class GroupAccountInfoController implements ApplicationRunner {
         if (groupReply.contains(Integer.valueOf(event.getGroup().getId().toString())) && !blackset.contains(Long.parseLong(accountCode))) {
             String valuemessage = "";
             for (love.forte.simbot.message.Message.Element<?> message : event.getMessageContent().getMessages()) {
-//                if (message instanceof Image<?> image) {
-//                    String picture = get_url_in_text_and_get_picture_from_url.getPicture(image.getResource().getName());
-//                    if (picture != null) {
-//                        SendMsgUtil.sendSimpleGroupImage(event.getGroup(), picture);
-//                    }
-//                }
                 if (message instanceof Text text) {
                     String text1 = ((Text) message).getText();
                     //校验text中是否含有url 如果有url的话解析并发送图片
                     try {
                         MessagesBuilder messagesBuilder1 = get_picture.get(text1);
                         event.getSource().sendBlocking(messagesBuilder1.build());
-                    }catch (Exception e){
+                    } catch (Exception e) {
 
                     }
 
@@ -300,11 +299,11 @@ public class GroupAccountInfoController implements ApplicationRunner {
                                 MessagesBuilder messagesBuilder = new MessagesBuilder();
                                 messagesBuilder.image(Resource.of(new URL(messages.get(0).getUrl())));
                                 Messages build = messagesBuilder.build();
-                               event.getSource().sendBlocking(build);
+                                event.getSource().sendBlocking(build);
                             } else {
                                 String v = messages.get(0).getValuemessage();
                                 MessagesBuilder message2 = Cat_to_message.getMessage(messages.get(0).getValuemessage());
-                               event.getSource().sendBlocking(message2.build());
+                                event.getSource().sendBlocking(message2.build());
                             }
 
                         } else {
@@ -315,61 +314,104 @@ public class GroupAccountInfoController implements ApplicationRunner {
                                 MessagesBuilder messagesBuilder = new MessagesBuilder();
                                 try {
                                     messagesBuilder.image(Resource.of(new URL(messages.get(i).getUrl())));
-                                    }catch (Exception e){
+                                } catch (Exception e) {
 
                                 }
 
                                 Messages build = messagesBuilder.build();
-                               event.getSource().sendBlocking(build);
+                                event.getSource().sendBlocking(build);
 
                             } else {
                                 String v = messages.get(i).getValuemessage();
                                 MessagesBuilder message2 = Cat_to_message.getMessage(v);
-                               event.getSource().sendBlocking(message2.build());
+                                event.getSource().sendBlocking(message2.build());
                             }
                         }
                     }
-
-
                 }
                 if (message instanceof SimbotOriginalMiraiMessage) {
+                    String urlpic=null;
+                    String from=null;
+                    String title=null;
+                    // 获取信息
+                    String xmlString = ((SimbotOriginalMiraiMessage) message).getOriginalMiraiMessage().contentToString();
+                   try{
+                       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                       DocumentBuilder builder = factory.newDocumentBuilder();
+                       Document doc = builder.parse(new InputSource(new StringReader(xmlString)));
+                       Element msgElement = doc.getDocumentElement();
+                       String url = msgElement.getAttribute("url");
+                       String brief = msgElement.getAttribute("brief");
+                       NodeList summaryNodes = doc.getElementsByTagName("item");
+                       // 如果找到了至少一个"summary"元素
+                       if (summaryNodes.getLength() > 0) {
+                           // 获取第一个"summary"元素的内容
+                           Element summaryElement = (Element) summaryNodes.item(0);
+                           title = summaryElement.getTextContent();
 
-                        // 获取信息
-                        String s = ((SimbotOriginalMiraiMessage) message).getOriginalMiraiMessage().contentToString();
-                    JSONObject jsonObject = JSON.parseObject(s);
-                    if(!Objects.isNull(jsonObject.get("desc").toString())){
-                        String desc = jsonObject.get("desc").toString();
-                        if (desc!=null&&desc.equals("哔哩哔哩")){
+                       }
+                       NodeList titleNodes = doc.getElementsByTagName("title");
+                       // 如果找到了至少一个"summary"元素
+                       if (titleNodes.getLength() > 0) {
+                           // 获取第一个"summary"元素的内容
+                           Element summaryElement = (Element) titleNodes.item(0);
+                           from= summaryElement.getTextContent();
 
-                            String meta = jsonObject.get("meta").toString();
-                            JSONObject json = JSON.parseObject(meta);
-                            JSONObject  detail_1= (JSONObject) json.get("detail_1");
-                            String url =  detail_1.get("qqdocurl").toString();
+                       }
+                       NodeList urlNodes = doc.getElementsByTagName("source");
+                       if (urlNodes.getLength() > 0) {
+                           // 获取第一个"summary"元素的内容
+                           Element summaryElement = (Element) urlNodes.item(0);
+                           urlpic= summaryElement.getAttribute("icon");
 
-                            Document parse = null;
-                            try {
-                                parse = Jsoup.parse(new URL(url), 3000);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            Elements elementsByClass = parse.getElementsByClass("desc-info desc-v2 open");
-                            Element comment = parse.getElementById("v_desc");
-                            event.getGroup().sendBlocking("视频的简介是:\n"+comment.text());
-                        }
+                       }
+//                       System.out.println("视频链接是url:"+url);
+//                       System.out.println("图片url是" + urlpic);
+//                       System.out.println("brief:"+brief);
+//                       System.out.println("来源是: " + from);
+//                       System.out.println("标题是"+title);
+                       MessagesBuilder messagesBuilder = new MessagesBuilder();
+                       messagesBuilder.text("转发标题是：\n" + title +"\n"+ "地址是："+url+"\n"+"转发的来源是："+brief);
+                       messagesBuilder.image(Resource.of(new URL(urlpic)));
+                       Messages build = messagesBuilder.build();
+                       //    event.replyAsync(build);
+                       event.getSource().sendBlocking(build);
+                    } catch (Exception e) {
+                    log.info(e.getMessage());
                     }
+//                    JSONObject jsonObject = JSON.parseObject(s);
+//                    if(!Objects.isNull(jsonObject.get("desc").toString())){
+//                        String desc = jsonObject.get("desc").toString();
+//                        if (desc!=null&&desc.equals("哔哩哔哩")){
+//
+//                            String meta = jsonObject.get("meta").toString();
+//                            JSONObject json = JSON.parseObject(meta);
+//                            JSONObject  detail_1= (JSONObject) json.get("detail_1");
+//                            String url =  detail_1.get("qqdocurl").toString();
+//
+//                            Document parse = null;
+//                            try {
+//                                parse = Jsoup.parse(new URL(url), 3000);
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                            Elements elementsByClass = parse.getElementsByClass("desc-info desc-v2 open");
+//                            Element comment = parse.getElementById("v_desc");
+//                            event.getGroup().sendBlocking("视频的简介是:\n"+comment.text());
+//                        }
+//                    }
 
 
                 }
                 if (message instanceof At) {
                     ID targetId = ((At) message).getTarget();
-                    if(targetId.toString().equals(event.getBot().getId().toString()))
-                    {
+                    if (targetId.toString().equals(event.getBot().getId().toString())) {
                         GroupMember targetMember = group.getMember(targetId);
                         if (targetMember == null) {
                             //             log.info(MessageFormat.format("[AT消息:未找到目标用户: {0} ]", targetId));
                         } else {
                             //               log.info(MessageFormat.format("[AT消息: @{0}( {1} )", targetMember.getNickOrUsername(), targetMember.getId()));
-                            event.getSource().sendBlocking(random_say.say() );
+                            event.getSource().sendBlocking(random_say.say());
 
                         }
 
@@ -393,20 +435,19 @@ public class GroupAccountInfoController implements ApplicationRunner {
             }
 
 
-
         }
     }
 
-        @Override
-        public void run (ApplicationArguments args) throws Exception {
-            Set<String> groupReply = redis.setfindAll("groupReply");
-            Set<String> black = redis.setfindAll("black");
-            for (String s : groupReply) {
-                this.groupReply.add(Integer.valueOf(s));
-            }
-            for (String s : black) {
-                this.blackset.add(Long.parseLong(s));
-            }
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        Set<String> groupReply = redis.setfindAll("groupReply");
+        Set<String> black = redis.setfindAll("black");
+        for (String s : groupReply) {
+            this.groupReply.add(Integer.valueOf(s));
+        }
+        for (String s : black) {
+            this.blackset.add(Long.parseLong(s));
         }
     }
+}
 
