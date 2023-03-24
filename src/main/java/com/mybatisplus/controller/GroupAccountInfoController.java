@@ -370,41 +370,43 @@ private GetBilil getBilil;
                            urlpic= summaryElement.getAttribute("icon");
 
                        }
-
-
-
-
-
-                       //    event.replyAsync(build);
-                       if("[QQ小程序]哔哩哔哩".equals(brief)){
-                           MessagesBuilder messagesBuilder = new MessagesBuilder();
-                           String s = getBilil.get(url);
-                           messagesBuilder.text( title +"\n"+"简介是:"+s+"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
-                           messagesBuilder.image(Resource.of(new URL(urlpic)));
-                           Messages build = messagesBuilder.build();
-                           event.getSource().sendBlocking(build);
-                       }else {
-                           MessagesBuilder messagesBuilder = new MessagesBuilder();
-                           messagesBuilder.text( title +"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
-                           messagesBuilder.image(Resource.of(new URL(urlpic)));
-                           Messages build = messagesBuilder.build();
-                           event.getSource().sendBlocking(build);
+                       if(brief!=null){
+                           //    event.replyAsync(build);
+                           if("[QQ小程序]哔哩哔哩".equals(brief)){
+                               MessagesBuilder messagesBuilder = new MessagesBuilder();
+                               String s = getBilil.get(url);
+                               messagesBuilder.text( title +"\n"+"简介是:"+s+"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
+                               messagesBuilder.image(Resource.of(new URL(urlpic)));
+                               Messages build = messagesBuilder.build();
+                               event.getSource().sendBlocking(build);
+                           }else {
+                               MessagesBuilder messagesBuilder = new MessagesBuilder();
+                               messagesBuilder.text( title +"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
+                               messagesBuilder.image(Resource.of(new URL(urlpic)));
+                               Messages build = messagesBuilder.build();
+                               event.getSource().sendBlocking(build);
+                           }
                        }
+
+
 
 
                     } catch (Exception e) {
-                       MessagesBuilder messagesBuilder = new MessagesBuilder();
-                       if("[QQ小程序]哔哩哔哩".equals(brief)){
-                           String s = getBilil.get(url);
-                           messagesBuilder.text( title +"\n"+"简介是:"+s+"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
-                       }else {
-                           messagesBuilder.text("转发标题是：\n" + title +"\n"+ "地址是:\n"+url+"\n"+"转发的来源是:\n"+brief);
+                       if(brief!=null) {
+                           MessagesBuilder messagesBuilder = new MessagesBuilder();
+                           if ("[QQ小程序]哔哩哔哩".equals(brief)) {
+                               String s = getBilil.get(url);
+                               messagesBuilder.text(title + "\n" + "简介是:" + s + "\n" + "地址是:\n" + url + "\n" + "转发的来源是:\n" + brief);
+                           } else {
+                               messagesBuilder.text("转发标题是：\n" + title + "\n" + "地址是:\n" + url + "\n" + "转发的来源是:\n" + brief);
+                           }
+                           Messages build = messagesBuilder.build();
+                           //    event.replyAsync(build);
+                           event.getSource().sendBlocking(build);
                        }
-                       Messages build = messagesBuilder.build();
-                       //    event.replyAsync(build);
-                       event.getSource().sendBlocking(build);
                     log.info(e.getMessage());
                     }
+
 
                 }
                 if (message instanceof At) {
