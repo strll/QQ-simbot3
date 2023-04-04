@@ -1,6 +1,7 @@
 yml文件配置如下
 
 # QQ-simbot3
+```yaml
 spring:
 
   servlet:
@@ -9,9 +10,8 @@ spring:
       maxFileSize: 500MB
       maxRequestSize: 500MB
       file-size-threshold: 500MB
-  # 配置数据源信息
-  datasource:
 
+  datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url:
     username: 
@@ -69,3 +69,4 @@ qqemail:
 ChatGpt:
   url: 
   key: 
+```
