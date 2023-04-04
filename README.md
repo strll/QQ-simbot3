@@ -11,18 +11,12 @@ spring:
       file-size-threshold: 500MB
   # 配置数据源信息
   datasource:
-    # 配置数据源类型
 
-    # 配置连接数据库信息
     driver-class-name: com.mysql.cj.jdbc.Driver
     url:
     username: 
     password: 
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url:
-#    username:
-#    password: 
-#
+
   redis:
     host: 
     port: 6379  
@@ -45,7 +39,7 @@ simbot:
       protocol: ANDROID_PAD
 
 server:
-  #端口号
+
   port: 
 
 mybatis-plus:
