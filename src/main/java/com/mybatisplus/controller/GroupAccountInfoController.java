@@ -93,7 +93,7 @@ private GetBilil getBilil;
                 "\n 8.nana天气 新增天气查询(2022.8.15)" +
                 "\n 9.nana模块管理" +
                 "\n 10.nana点歌(示例:nana点歌Hurt)" +
-                "\n 11.nana每日新闻" +
+                "\n 11.nana每日新闻 如果无法发送请使用 nana每日新闻无图" +
                 "\n 12.nana微博热搜" +
                 "\n 13.nana历史上的今天"
                 + "\n 15.nana翻译(示例: nana翻译 hello)"

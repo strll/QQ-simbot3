@@ -1,6 +1,7 @@
 package com.mybatisplus.controller;
 
 
+import com.mybatisplus.entity.MyGroupMessageEvent_TimeSend;
 import com.mybatisplus.service.IAdminService;
 import com.mybatisplus.utils.GetMoYu;
 import com.mybatisplus.utils.GetNews;
@@ -27,7 +28,7 @@ import java.util.HashSet;
 public class GroupTimeSend {
     @Autowired
     private Get_Cartoon_News cartoon_news;
-    private HashSet<GroupMessageEvent> hashset=new HashSet();
+    private HashSet<MyGroupMessageEvent_TimeSend> hashset=new HashSet();
     @Autowired
     private IAdminService adminService;
 
@@ -48,7 +49,8 @@ public class GroupTimeSend {
         String accountCode = event.getAuthor().getId().toString();  //获取发送人的QQ号
         String groupid = group.getId().toString();
         if (Integer.parseInt(adminService.get_Admin_permission(accountCode).getPermission()) <= 2) {
-             boolean add = hashset.add(event);
+            MyGroupMessageEvent_TimeSend myGroupMessageEvent_timeSend = new MyGroupMessageEvent_TimeSend(event);
+            boolean add = hashset.add(myGroupMessageEvent_timeSend);
             if (add){
                 event.replyAsync ("添加成功");
             }else{
@@ -64,7 +66,8 @@ public class GroupTimeSend {
         String accountCode = event.getAuthor().getId().toString();  //获取发送人的QQ号
         String groupid = group.getId().toString();
         if (Integer.parseInt(adminService.get_Admin_permission(accountCode).getPermission()) <= 2) {
-            boolean add = hashset.remove(event);
+            MyGroupMessageEvent_TimeSend myGroupMessageEvent_timeSend = new MyGroupMessageEvent_TimeSend(event);
+            boolean add = hashset.remove(myGroupMessageEvent_timeSend);
             if (add){
                 event.replyAsync ("取消成功");
             }else{
@@ -112,19 +115,21 @@ public class GroupTimeSend {
     @Scheduled(cron="0 0 7 * * * ")
     public void historyTody(){
         if(ds_flag) {
-            for (GroupMessageEvent event :  hashset) {
-                 String historytody = historyTody.historytody();
+
+            for (MyGroupMessageEvent_TimeSend event :  hashset) {
+                GroupMessageEvent groupMessageEvent = event.getGroupMessageEvent();
+                String historytody = historyTody.historytody();
                 String[] split = historytody.split("end");
                 MiraiForwardMessageBuilder miraiForwardMessageBuilder=new MiraiForwardMessageBuilder();
 
                 for (String s : split) {
                     var messagesBuilder = new MessagesBuilder();
                     messagesBuilder.append(s);
-                    miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(),messagesBuilder.build());
+                    miraiForwardMessageBuilder.add( groupMessageEvent.getBot().getId(), groupMessageEvent.getBot().getUsername(),messagesBuilder.build());
                 }
-                event.getSource().sendBlocking("早上好,这是历史上的今天");
+                groupMessageEvent.getSource().sendBlocking("早上好,这是历史上的今天");
                 // 发送消息
-                event.getSource().sendAsync( miraiForwardMessageBuilder.build());
+                groupMessageEvent.getSource().sendAsync( miraiForwardMessageBuilder.build());
             }
         }
 
@@ -133,9 +138,11 @@ public class GroupTimeSend {
     @Scheduled(cron="0 30 7 * * *")
     public void moyu(){
         if(ds_flag) {
-            for (GroupMessageEvent event :  hashset) {
+
+            for (MyGroupMessageEvent_TimeSend event :  hashset) {
+                GroupMessageEvent groupMessageEvent = event.getGroupMessageEvent();
                 MessagesBuilder moyu = this.moyu.getMoyu();
-                event.getSource().sendAsync(moyu.build());
+                groupMessageEvent.getSource().sendAsync(moyu.build());
             }
 
 
@@ -148,9 +155,10 @@ public class GroupTimeSend {
     @Scheduled(cron="0 31 7 * * * ")
     public void sendNews() throws IOException {
         if(ds_flag) {
-            for (GroupMessageEvent event :  hashset) {
-                MiraiForwardMessageBuilder miraiForwardMessageBuilder = getNews.EveryDayNews(event);
-                event.getSource().sendAsync(miraiForwardMessageBuilder.build());
+            for (MyGroupMessageEvent_TimeSend event :  hashset) {
+                GroupMessageEvent groupMessageEvent = event.getGroupMessageEvent();
+                MiraiForwardMessageBuilder miraiForwardMessageBuilder = getNews.EveryDayNews(groupMessageEvent);
+                groupMessageEvent.getSource().sendAsync(miraiForwardMessageBuilder.build());
             }
 
         }
@@ -165,14 +173,15 @@ public class GroupTimeSend {
             String[] ends = news.split("end");
 
 
-            for (GroupMessageEvent event :  hashset) {
-                event.getSource().sendAsync("早上好 这是本周的动漫资讯");
+            for (MyGroupMessageEvent_TimeSend event :  hashset) {
+                GroupMessageEvent groupMessageEvent = event.getGroupMessageEvent();
+                groupMessageEvent.getSource().sendAsync("早上好 这是本周的动漫资讯");
 
                 MiraiForwardMessageBuilder miraiForwardMessageBuilder=new MiraiForwardMessageBuilder();
                 var messagesBuilder = new MessagesBuilder();
                 for (String s : ends) {
                     messagesBuilder.append(s);
-                    miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(),messagesBuilder.build());
+                    miraiForwardMessageBuilder.add( groupMessageEvent.getBot().getId(), groupMessageEvent.getBot().getUsername(),messagesBuilder.build());
                 }
             }
             }

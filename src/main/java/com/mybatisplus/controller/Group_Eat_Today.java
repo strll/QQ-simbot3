@@ -221,7 +221,6 @@ public class Group_Eat_Today implements ApplicationRunner {
 
       for (Today_Eat end :list) {
           String message = end.getMessage();
-
           String pattern = "https?://[^\\s]+";
           Pattern r = Pattern.compile(pattern);
           Matcher m = r.matcher(message);
@@ -234,16 +233,14 @@ if(m.find()){
 
     String s = group.replaceAll("]", "");
     messagesBuilder.append("该条信息的ID是: "+end.getId()+"\n信息内容是:\n"+text1);
-    messagesBuilder.image(Resource.of(new URL(s)));
-    messagesBuilder.append("\n存储人是:\n"+end.getQq());
+          messagesBuilder.append("\n存储人是:\n"+end.getQq());
+    if(s!=null&&!s.equals("")){
+        messagesBuilder.image(Resource.of(new URL(s)));
+    }
     miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(),messagesBuilder.build());
       }
 
-
       event.replyAsync(miraiForwardMessageBuilder.build());
-
-
-
     }
 
 

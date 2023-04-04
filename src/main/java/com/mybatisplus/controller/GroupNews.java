@@ -27,7 +27,17 @@ public class GroupNews {
     public void sendNews(GroupMessageEvent event) throws IOException {
         MiraiForwardMessageBuilder miraiForwardMessageBuilder = getNews.EveryDayNews(event);
         MiraiSendOnlyForwardMessage build = miraiForwardMessageBuilder.build();
-        event.getSource().sendAsync(build);
+        event.getGroup().sendBlocking(build);
+
+//        event.getSource().sendAsyn(build);
+    }
+    @Async
+    @Listener
+    @Filter(value="nana每日新闻无图",matchType = MatchType.TEXT_EQUALS)
+    public void sendNews_safe(GroupMessageEvent event) throws IOException {
+        MiraiForwardMessageBuilder miraiForwardMessageBuilder = getNews.EveryDayNews_safe(event);
+        MiraiSendOnlyForwardMessage build = miraiForwardMessageBuilder.build();
+        event.getGroup().sendBlocking(build);
     }
 
 }

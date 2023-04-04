@@ -1,6 +1,7 @@
 package com.mybatisplus.utils;
 
 
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import love.forte.simbot.component.mirai.message.MiraiForwardMessageBuilder;
@@ -57,14 +58,49 @@ public class GetNews {
             if("img".equals(element.tagName())){
                 var result = new MessagesBuilder();
                 String url = element.attr("src");
-               result.image(Resource.of(new URL(url))).append("\n");
-                miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), result.build());
+                if (!StrUtil.isEmpty(url)){
+                    result.image(Resource.of(new URL(url)));
+                    miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), result.build());
+                }
             }else if("p".equals(element.tagName())) {
                 var result = new MessagesBuilder();
-                String content = element.text().trim();
-                result.append(content).append("\n");
-                miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), result.build());
 
+                    String content = element.text().trim();
+                if (!StrUtil.isEmpty(content)) {
+                    result.append(content).append("\n");
+                    miraiForwardMessageBuilder.add(event.getBot().getId(), event.getBot().getUsername(), result.build());
+                }
+            }
+        }
+        return  miraiForwardMessageBuilder;
+    }
+
+
+    public  MiraiForwardMessageBuilder EveryDayNews_safe(GroupMessageEvent event) throws IOException {
+        MiraiForwardMessageBuilder miraiForwardMessageBuilder=new MiraiForwardMessageBuilder();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readValue(new URL("https://www.zhihu.com/api/v4/columns/c_1261258401923026944/items"), JsonNode.class);
+        String contentHtml = jsonNode.get("data").get(0).get("content").asText();
+
+        Document parse = Jsoup.parse(contentHtml);
+        Elements allElements = parse.getAllElements();
+        for (Element element : allElements) {
+            if("img".equals(element.tagName())){
+//                var result = new MessagesBuilder();
+//                String url = element.attr("src");
+//                if (!StrUtil.isEmpty(url)){
+//                    result.image(Resource.of(new URL(url)));
+//                    miraiForwardMessageBuilder.add(event.getBot().getId(),event.getBot().getUsername(), result.build());
+//                }
+            }else if("p".equals(element.tagName())) {
+                var result = new MessagesBuilder();
+
+                String content = element.text().trim();
+                if (!StrUtil.isEmpty(content)) {
+                    result.append(content).append("\n");
+                    miraiForwardMessageBuilder.add(event.getBot().getId(), event.getBot().getUsername(), result.build());
+                }
             }
         }
         return  miraiForwardMessageBuilder;
