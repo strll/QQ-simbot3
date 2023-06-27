@@ -139,7 +139,6 @@ public class GroupStudySessionAreaEvent implements ApplicationRunner {
               for (love.forte.simbot.message.Message.Element<?> element :messages1) {
                   if(element instanceof Text text){
                       sendvalue.append(text.getText());
-                      //        message.setValuemessage(text.getText());
                   }
                   if (element instanceof Image<?> image) {
                       String url = image.getResource().getName();

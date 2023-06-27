@@ -318,9 +318,7 @@ private GetBilil getBilil;
                                 try {
                                     messagesBuilder.image(Resource.of(new URL(messages.get(i).getUrl())));
                                 } catch (Exception e) {
-
                                 }
-
                                 Messages build = messagesBuilder.build();
                                 event.getSource().sendBlocking(build);
 
@@ -353,22 +351,16 @@ private GetBilil getBilil;
                            // 获取第一个"summary"元素的内容
                            Element summaryElement = (Element) summaryNodes.item(0);
                            title = summaryElement.getTextContent();
-
                        }
                        NodeList titleNodes = doc.getElementsByTagName("title");
-                       // 如果找到了至少一个"summary"元素
                        if (titleNodes.getLength() > 0) {
-                           // 获取第一个"summary"元素的内容
                            Element summaryElement = (Element) titleNodes.item(0);
                            from= summaryElement.getTextContent();
-
                        }
                        NodeList urlNodes = doc.getElementsByTagName("source");
                        if (urlNodes.getLength() > 0) {
-                           // 获取第一个"summary"元素的内容
                            Element summaryElement = (Element) urlNodes.item(0);
                            urlpic= summaryElement.getAttribute("icon");
-
                        }
                        if(brief!=null){
                            //    event.replyAsync(build);

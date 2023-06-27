@@ -14,8 +14,9 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <simbot.version>3.0.0-RC.3</simbot.version>
-        <simbot-component-mirai.version>3.0.0.0-RC</simbot-component-mirai.version>
+        <simbot.version>3.1.0</simbot.version>
+        <simbot-component-mirai.version>3.0.0.0-M7</simbot-component-mirai.version>
+
     </properties>
 
     <!-- Spring Boot 相关。此处选择使用parent对Spring进行版本控制 -->
@@ -32,18 +33,25 @@
 
     <dependencies>
 
-
-
         <!-- https://mvnrepository.com/artifact/love.forte.simbot.boot/simboot-core-springboot-starter -->
+<!--        <dependency>-->
+<!--            <groupId>love.forte.simbot.boot</groupId>-->
+<!--            <artifactId>simboot-core-spring-boot-starter</artifactId>-->
+<!--            <version>${simbot.version}</version>-->
+<!--        </dependency>-->
 
-
-
+<!--        <dependency>-->
+<!--            <groupId>love.forte.simbot.boot</groupId>-->
+<!--            <artifactId>simboot-core-spring-boot-starter</artifactId>-->
+<!--            <version>${simbot.version}</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>love.forte.simbot.boot</groupId>
             <artifactId>simboot-core-spring-boot-starter</artifactId>
-            <version>${simbot.version}</version>
+            <version>3.1.0</version>
         </dependency>
+
         <dependency>
             <groupId>love.forte.simbot.component</groupId>
             <artifactId>simbot-component-mirai-core</artifactId>
@@ -252,11 +260,12 @@
 
         <dependency>
             <groupId>com.aliyun</groupId>
-            <artifactId>fix-protocol-version-1.3.0.mirai2</artifactId>
-            <version>1.3.0</version>
+            <artifactId>fix-protocol-version-1.8.3.mirai2</artifactId>
+            <version>1.8.3</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/fix-protocol-version-1.3.0.mirai2.jar</systemPath>
+            <systemPath>${project.basedir}/lib/fix-protocol-version-1.8.3.mirai2.jar</systemPath>
         </dependency>
+
 
         <dependency>
             <groupId>dom4j</groupId>

@@ -131,7 +131,6 @@ public class Group_Eat_Today implements ApplicationRunner {
                         String group = m.group();
                          image = group.replaceAll("]", "");
                     }
-
                     messagesBuilder.text("要不试试" + qq + "推荐的: \n+"+messagetext+"\n");
                     messagesBuilder.image(Resource.of(new URL(image)));
                     Messages build = messagesBuilder.build();
